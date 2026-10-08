@@ -3,30 +3,23 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Pygame Zero — Layouts, Actors & Shapes</title>
-  
-  <!-- Google Fonts: Poppins & Fira Code -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@500;600;700&family=Poppins:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet">
+  <title>Vibe Coding Day 3: Build Dynamic Apps with AI</title>
   
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
-  
-  <!-- FontAwesome & Canvas Confetti CDN -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <!-- Canvas Confetti CDN -->
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+  <!-- Google Font: Poppins -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
   <script>
     tailwind.config = {
       theme: {
         extend: {
-          fontFamily: {
-            sans: ['Poppins', 'sans-serif'],
-            mono: ['Fira Code', 'monospace']
-          },
           colors: {
-            alphagen: {
+            brand: {
               purple: '#5E48C4',
               purpleDark: '#4A3AAD',
               purpleMid: '#7B6ED4',
@@ -35,17 +28,21 @@
               yellow: '#FFD071',
               yellowDark: '#E6B84A',
               yellowPale: '#FFF3CC',
-              nearBlack: '#1A1A1A',
-              darkGrey: '#404048',
-              midGrey: '#888896',
-              lightGrey: '#F2F2F4',
+              black: '#1A1A1A',
+              greyDark: '#404048',
+              greyMid: '#888896',
+              greyLight: '#F2F2F4',
               cyan: '#59E4FB',
               cyanDark: '#055F6E',
               cyanPale: '#E0FAFE',
               coral: '#ED5661',
               coralDark: '#993040',
-              coralPale: '#FFF0F1'
+              coralPale: '#FFF0F1',
+              green: '#AED581',
             }
+          },
+          fontFamily: {
+            sans: ['Poppins', 'sans-serif'],
           }
         }
       }
@@ -53,1215 +50,937 @@
   </script>
 
   <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
     body {
-      margin: 0;
-      padding: 12px;
-      background-color: #0f081d;
       font-family: 'Poppins', sans-serif;
+      background-color: #F5F4FF;
       color: #1A1A1A;
-      overflow-x: hidden;
       user-select: none;
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
     }
 
-    .stage-wrapper {
-      width: 100%;
-      max-width: 1280px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
-
-    .slide-stage {
-      width: 1280px;
-      height: 720px;
-      margin: 0 auto;
-      position: relative;
-      overflow: hidden;
-      box-sizing: border-box;
-      background-color: #ffffff;
-      border-radius: 28px;
-      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-      border: 1px solid #EAE7FE;
-      transform-origin: top center;
-    }
-
-    .slide-panel {
-      width: 1280px;
-      height: 720px;
-      padding: 68px 44px 20px 44px;
+    .slide {
       display: none;
-      flex-direction: column;
-      justify-content: space-between;
-      position: absolute;
-      top: 0;
-      left: 0;
-      z-index: 1;
-      box-sizing: border-box;
-      background: #ffffff;
+      opacity: 0;
+      transform: translateY(16px) scale(0.98);
+      transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
     }
 
-    .slide-panel.active {
+    .slide.active {
       display: flex;
-      animation: slideInSmooth 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+      opacity: 1;
+      transform: translateY(0) scale(1);
     }
 
-    @keyframes slideInSmooth {
-      from { opacity: 0; transform: scale(0.98) translateY(10px); }
-      to { opacity: 1; transform: scale(1) translateY(0); }
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #F2F2F4;
+      border-radius: 8px;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #7B6ED4;
+      border-radius: 8px;
     }
 
-    .btn-interactive {
-      cursor: pointer;
-      transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+    @keyframes subtle-bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-5px); }
     }
-    .btn-interactive:hover {
-      transform: translateY(-2px) scale(1.02);
-      box-shadow: 0 10px 20px -5px rgba(94, 72, 196, 0.3);
-    }
-    .btn-interactive:active {
-      transform: translateY(1px) scale(0.98);
-    }
-
-    .nav-bar {
-      width: 1280px;
-      margin: 12px auto 8px auto;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 0 16px;
-      transform-origin: top center;
-    }
-
-    .nav-btn {
-      background: #2A1C68;
-      color: #FFD071;
-      border: 2px solid #5E48C4;
-      padding: 10px 24px;
-      border-radius: 14px;
-      font-family: 'Poppins', sans-serif;
-      font-weight: 700;
-      font-size: 15px;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      transition: all 0.2s ease;
-    }
-    .nav-btn:hover:not(:disabled) {
-      background: #5E48C4;
-      color: #ffffff;
-      transform: scale(1.04);
-    }
-    .nav-btn:disabled {
-      opacity: 0.35;
-      cursor: not-allowed;
-    }
-
-    .dot-indicator {
-      width: 10px;
-      height: 10px;
-      border-radius: 50%;
-      background: #2A1C68;
-      cursor: pointer;
-      transition: all 0.2s ease;
-    }
-    .dot-indicator.active {
-      background: #FFD071;
-      width: 24px;
-      border-radius: 10px;
-    }
-
-    .spark-wavy-underline {
-      position: relative;
-      display: inline-block;
-      color: #5E48C4;
-    }
-    .spark-wavy-underline::after {
-      content: '';
-      position: absolute;
-      left: 0;
-      bottom: -6px;
-      width: 100%;
-      height: 12px;
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 4' preserveAspectRatio='none'%3E%3Cpath d='M0 2 Q 5 0, 10 2 T 20 2' fill='none' stroke='%23FFD071' stroke-width='2.5' stroke-linecap='round'/%3E%3C/svg%3E");
-      background-repeat: repeat-x;
-      background-size: 20px 12px;
-    }
-
-    .quiz-option {
-      background: #ffffff;
-      border: 2px solid #EAE7FE;
-      border-radius: 18px;
-      padding: 16px 22px;
-      font-size: 16px;
-      font-weight: 600;
-      color: #1A1A1A;
-      cursor: pointer;
-      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      text-align: left;
-    }
-    .quiz-option:hover {
-      border-color: #5E48C4;
-      background: #F5F4FF;
-      transform: translateX(4px);
-    }
-    .quiz-option.selected-correct {
-      background: #f0fdf4 !important;
-      border-color: #22c55e !important;
-      color: #14532d !important;
-    }
-    .quiz-option.selected-wrong {
-      background: #FFF0F1 !important;
-      border-color: #ED5661 !important;
-      color: #993040 !important;
-    }
-
-    .game-grid-bg {
-      background-color: #0b1329;
-      background-image: linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px),
-                        linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
-      background-size: 20px 20px;
+    .animate-bounce-subtle {
+      animation: subtle-bounce 2s infinite ease-in-out;
     }
   </style>
 </head>
+<body class="h-screen w-screen flex flex-col justify-between overflow-hidden bg-brand-purpleGhost text-brand-black">
 
-<body>
-<div class="stage-wrapper">
-  <div class="slide-stage">
-
-    <!-- Header Navigation Bar -->
-    <header class="w-full bg-white border-b border-alphagen-purplePale px-6 py-2.5 flex items-center justify-between relative z-50">
-      <div class="flex items-center gap-3">
-        <div class="w-10 h-10 rounded-xl bg-alphagen-purple flex items-center justify-center text-white text-xl shadow-md shadow-alphagen-purple/20">
-          <i class="fa-solid fa-gamepad"></i>
-        </div>
-        <div>
-          <h1 class="font-extrabold text-base text-alphagen-purple tracking-tight">Pygame Zero — Layouts, Actors &amp; Shapes</h1>
-          <p class="text-xs font-semibold text-alphagen-yellowDark">Interactive Game Development Masterclass</p>
-        </div>
+  <!-- HEADER TOPBAR -->
+  <header class="bg-brand-purple text-white px-6 py-3.5 shadow-md flex justify-between items-center z-20">
+    <div class="flex items-center space-x-3">
+      <div class="bg-brand-yellow text-brand-black font-extrabold rounded-full px-3 py-1 text-xs md:text-sm tracking-wide shadow-sm">
+        ALPHAGEN LEARNING
       </div>
-      
-      <div class="flex items-center gap-2" id="header-dots-container"></div>
-
-      <div class="flex items-center gap-3">
-        <span id="slide-counter-pill" class="text-xs font-bold text-alphagen-purple bg-alphagen-purpleGhost px-3.5 py-1.5 rounded-full border border-alphagen-purplePale">
-          Slide 1 / 9
-        </span>
-
-        <select id="slide-dropdown" onchange="goToSlide(parseInt(this.value))" class="text-xs font-bold text-alphagen-nearBlack bg-alphagen-lightGrey hover:bg-slate-200 border border-slate-200 px-3 py-1.5 rounded-xl cursor-pointer focus:outline-none focus:border-alphagen-purple transition">
-          <option value="1">1. Welcome Screen</option>
-          <option value="2">2. Quick Recap &amp; Today's Session</option>
-          <option value="3">3. Oversized Actor Scenario</option>
-          <option value="4">4. Actor Resizing Tool &amp; Syntax</option>
-          <option value="5">5. Actor Resizing Lab Challenge</option>
-          <option value="6">6. Game Layout Design Studio</option>
-          <option value="7">7. Pygame Zero Shapes Explorer</option>
-          <option value="8">8. Shape Projects Lab Challenge</option>
-          <option value="9">9. Master Knowledge Check</option>
-        </select>
-
-        <button onclick="toggleAudio()" id="audio-btn" class="w-9 h-9 rounded-xl bg-alphagen-purpleGhost hover:bg-alphagen-purplePale text-alphagen-purple border border-alphagen-purplePale flex items-center justify-center text-sm transition btn-interactive" title="Toggle Sound">
-          <i class="fa-solid fa-volume-high"></i>
-        </button>
-      </div>
-    </header>
-
-    <!-- SLIDE 1: HOME SCREEN -->
-    <div id="slide-1" class="slide-panel active justify-center items-center text-center">
-      <div class="inline-flex items-center gap-2 bg-alphagen-purpleGhost border-2 border-alphagen-purplePale text-alphagen-purple text-sm font-extrabold px-6 py-2 rounded-full mb-6 tracking-wider uppercase">
-        <i class="fa-solid fa-rocket text-alphagen-yellowDark"></i> PYGAME ZERO 
-      </div>
-
-      <h1 class="text-5xl md:text-6xl font-extrabold text-alphagen-nearBlack mb-6 tracking-tight leading-tight">
-        Mastering <span class="spark-wavy-underline">Game Layouts &amp; Shapes</span>
+      <h1 class="text-lg md:text-xl font-bold tracking-tight text-white hidden sm:block">
+        Vibe Coding: Build Dynamic Apps with AI
       </h1>
-
-     
-      <button onclick="nextSlide(); playSound('pop')" class="bg-alphagen-yellow hover:bg-alphagen-yellowDark text-alphagen-nearBlack font-extrabold text-xl px-12 py-5 rounded-2xl shadow-xl btn-interactive flex items-center gap-3">
-        <span>Start Exploring</span>
-        <i class="fa-solid fa-arrow-right"></i>
-      </button>
     </div>
 
-    <!-- SLIDE 2: QUICK RECAP & TODAY'S SESSION -->
-    <div id="slide-2" class="slide-panel bg-white justify-between">
-      <div>
-        <span class="text-xs uppercase font-extrabold tracking-wider text-alphagen-purple bg-alphagen-purpleGhost px-4 py-1.5 rounded-md border border-alphagen-purplePale">Overview</span>
-        <h2 class="text-3xl font-extrabold text-alphagen-purple mt-2">Recap and Agenda</h2>
+    <!-- Slide Jump Menu & Counter -->
+    <div class="flex items-center space-x-3">
+      <label for="slideSelect" class="text-xs md:text-sm font-semibold hidden md:inline text-brand-purplePale">Jump to:</label>
+      <select id="slideSelect" onchange="goToSlide(parseInt(this.value))" class="bg-white text-brand-purple font-bold text-sm md:text-base px-3 py-1 rounded-xl border-2 border-brand-yellow focus:outline-none shadow-sm cursor-pointer">
+        <option value="1">1. Welcome</option>
+        <option value="2">2. Knowledge Check</option>
+        <option value="3">3. 5-Day Camp Agenda</option>
+        <option value="4">4. Dynamic App & YouTube</option>
+        <option value="5">5. Database & Data Flow</option>
+        <option value="6">6. API Waiter Analogy</option>
+        <option value="7">7. Firebase Config Setup</option>
+        <option value="8">8. App Ideation Worksheet</option>
+        <option value="9">9. Draft Prompt Structure</option>
+        <option value="10">10. Project Review</option>
+        <option value="11">11. Wrap-up & Quiz</option>
+      </select>
+      <span id="slideCounter" class="text-xs md:text-sm font-bold bg-brand-purpleDark px-3 py-1.5 rounded-xl text-brand-yellow border border-brand-purpleMid">
+        1 / 11
+      </span>
+    </div>
+  </header>
+
+  <!-- MAIN SLIDE CONTAINER -->
+  <main class="flex-1 relative flex items-center justify-center p-4 md:p-6 overflow-hidden">
+
+    <!-- SLIDE 1: Welcome -->
+    <section class="slide active flex-col items-center justify-center text-center max-w-4xl w-full bg-white rounded-3xl p-8 md:p-14 shadow-xl border-4 border-brand-purplePale relative">
+      <div class="inline-block bg-brand-purplePale text-brand-purple font-extrabold text-xs md:text-sm tracking-widest uppercase px-5 py-2 rounded-full mb-8">
+        ALPHAGEN LEARNING
+      </div>
+      <h1 class="text-4xl md:text-6xl font-extrabold text-brand-black mb-10 leading-tight">
+        Vibe Coding: <br><span class="text-brand-purple">Build Dynamic Apps with AI</span>
+      </h1>
+      <button onclick="nextSlide()" class="bg-brand-yellow hover:bg-brand-yellowDark text-brand-black text-xl md:text-2xl font-bold py-4 px-10 rounded-2xl shadow-lg transform hover:scale-105 transition-all flex items-center gap-3">
+        <span>Start Exploring</span> ➔
+      </button>
+    </section>
+
+    <!-- SLIDE 2: Knowledge Check -->
+    <section class="slide flex-col items-center max-w-4xl w-full bg-white rounded-3xl p-5 md:p-7 shadow-xl border-4 border-brand-purplePale overflow-y-auto max-h-full">
+      <div class="text-center mb-4">
+        <div class="inline-block bg-brand-purplePale text-brand-purple font-extrabold text-xs tracking-widest uppercase px-4 py-1 rounded-full mb-1">
+          KNOWLEDGE CHECK
+        </div>
+        <h2 class="text-2xl md:text-3xl font-extrabold text-brand-purple">
+          Let's test your understanding
+        </h2>
       </div>
 
-      <div class="grid grid-cols-12 gap-8 my-auto items-stretch">
-        <!-- Quick Recap Card (6 cols) -->
-        <div class="col-span-6 bg-alphagen-purpleGhost border-2 border-alphagen-purplePale rounded-3xl p-7 flex flex-col justify-between">
+      <div class="w-full space-y-4 text-left text-xs">
+        <!-- Question 1 -->
+        <div class="bg-brand-purpleGhost p-4 rounded-2xl border-2 border-brand-purpleMid">
+          <p class="font-extrabold text-sm text-brand-black mb-2.5">1. What is a static app?</p>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
+            <button onclick="handleRecapAnswer(this, true)" class="recap-btn p-3 bg-white border border-brand-greyMid rounded-xl font-medium text-left hover:border-brand-purple transition">
+              A web app presenting fixed content that displays identically to all visitors.
+            </button>
+            <button onclick="handleRecapAnswer(this, false)" class="recap-btn p-3 bg-white border border-brand-greyMid rounded-xl font-medium text-left hover:border-brand-purple transition">
+              An app requiring dynamic live server data processing for every user.
+            </button>
+          </div>
+        </div>
+
+        <!-- Question 2 -->
+        <div class="bg-brand-purpleGhost p-4 rounded-2xl border-2 border-brand-purpleMid">
+          <p class="font-extrabold text-sm text-brand-black mb-2.5">2. Which file extension is used for adding client-side interactivity?</p>
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 font-bold text-center">
+            <button onclick="handleRecapAnswer(this, false)" class="recap-btn p-3 bg-white border border-brand-greyMid rounded-xl hover:border-brand-purple transition">.html</button>
+            <button onclick="handleRecapAnswer(this, false)" class="recap-btn p-3 bg-white border border-brand-greyMid rounded-xl hover:border-brand-purple transition">.css</button>
+            <button onclick="handleRecapAnswer(this, true)" class="recap-btn p-3 bg-white border border-brand-greyMid rounded-xl hover:border-brand-purple transition">.js</button>
+            <button onclick="handleRecapAnswer(this, false)" class="recap-btn p-3 bg-white border border-brand-greyMid rounded-xl hover:border-brand-purple transition">.py</button>
+          </div>
+        </div>
+
+        <!-- Question 3 -->
+        <div class="bg-brand-purpleGhost p-4 rounded-2xl border-2 border-brand-purpleMid">
+          <p class="font-extrabold text-sm text-brand-black mb-2.5">3. What type of server do we use to check output in VS Code?</p>
+          <div class="grid grid-cols-2 sm:grid-cols-3 gap-2 font-bold text-center">
+            <button onclick="handleRecapAnswer(this, true)" class="recap-btn p-3 bg-white border border-brand-greyMid rounded-xl hover:border-brand-purple transition">Live Server</button>
+            <button onclick="handleRecapAnswer(this, false)" class="recap-btn p-3 bg-white border border-brand-greyMid rounded-xl hover:border-brand-purple transition">Node Server</button>
+            <button onclick="handleRecapAnswer(this, false)" class="recap-btn p-3 bg-white border border-brand-greyMid rounded-xl hover:border-brand-purple transition">Apache Server</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 3: 5-Day Camp Agenda -->
+    <section class="slide flex-col items-center max-w-5xl w-full bg-white rounded-3xl p-5 md:p-7 shadow-xl border-4 border-brand-purplePale">
+      <div class="text-center mb-4">
+        <div class="inline-block bg-brand-yellow text-brand-black font-extrabold text-xs tracking-widest uppercase px-4 py-1 rounded-full mb-1">
+          OUR ROADMAP
+        </div>
+        <h2 class="text-2xl md:text-3xl font-extrabold text-brand-purple">
+          Agenda of the Camp
+        </h2>
+        <p class="text-xs md:text-sm text-brand-greyDark font-medium">
+          Here is our step-by-step path over 5 days:
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-5 gap-3 w-full my-auto">
+        <!-- Day 1 -->
+        <div class="bg-brand-green border-2 border-brand-purpleMid p-3 rounded-2xl text-center shadow-sm flex flex-col justify-between">
           <div>
-            <div class="flex items-center gap-3 mb-4">
-              <span class="text-3xl">⏮️</span>
-              <h3 class="font-extrabold text-xl text-alphagen-purple">Quick Recap</h3>
+            <span class="bg-brand-purple text-white font-extrabold text-[10px] px-2 py-0.5 rounded-full uppercase block mb-1">Day 1</span>
+            <h3 class="font-extrabold text-xs md:text-sm text-brand-purple mb-1">Introduction to Vibe Coding</h3>
+            <p class="text-[11px] text-brand-greyDark leading-tight">Get comfortable with vibe coding workflow & prompt engineering.</p>
+          </div>
+        </div>
+
+        <!-- Day 2 -->
+        <div class="bg-brand-green border-2 border-brand-purpleMid p-3 rounded-2xl text-center shadow-sm flex flex-col justify-between">
+          <div>
+            <span class="bg-brand-purple text-white font-extrabold text-[10px] px-2 py-0.5 rounded-full uppercase block mb-1">Day 2</span>
+            <h3 class="font-extrabold text-xs md:text-sm text-brand-purple mb-1">Build Static App</h3>
+            <p class="text-[11px] text-brand-greyDark leading-tight">Multi-page app with navigation, brand identity, and asset creation.</p>
+          </div>
+        </div>
+
+        <!-- Day 3 ACTIVE -->
+        <div class="bg-brand-yellowPale border-4 border-brand-yellowDark p-3 rounded-2xl text-center shadow-md flex flex-col justify-between transform scale-105">
+          <div>
+            <span class="bg-brand-yellow text-brand-black font-extrabold text-[10px] px-2 py-0.5 rounded-full uppercase block mb-1">Day 3 (Today)</span>
+            <h3 class="font-extrabold text-xs md:text-sm text-brand-black mb-1">Build Dynamic App</h3>
+            <p class="text-[11px] text-brand-greyDark leading-tight">Connect Firebase database. Write and read live data across devices.</p>
+          </div>
+        </div>
+
+        <!-- Day 4 -->
+        <div class="bg-brand-purpleGhost border-2 border-brand-purpleMid p-3 rounded-2xl text-center shadow-sm flex flex-col justify-between">
+          <div>
+            <span class="bg-brand-purple text-white font-extrabold text-[10px] px-2 py-0.5 rounded-full uppercase block mb-1">Day 4</span>
+            <h3 class="font-extrabold text-xs md:text-sm text-brand-purple mb-1">GitHub & Repositories</h3>
+            <p class="text-[11px] text-brand-greyDark leading-tight">Learn version control, upload code, and publish live on Vercel/Netlify.</p>
+          </div>
+        </div>
+
+        <!-- Day 5 -->
+        <div class="bg-brand-purpleGhost border-2 border-brand-purpleMid p-3 rounded-2xl text-center shadow-sm flex flex-col justify-between">
+          <div>
+            <span class="bg-brand-purple text-white font-extrabold text-[10px] px-2 py-0.5 rounded-full uppercase block mb-1">Day 5</span>
+            <h3 class="font-extrabold text-xs md:text-sm text-brand-purple mb-1">Portfolio Showcase</h3>
+            <p class="text-[11px] text-brand-greyDark leading-tight">Build personal showcase portfolio and present your favorite app!</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 4: Dynamic App & YouTube Experiment -->
+    <section class="slide flex-col items-center max-w-4xl w-full bg-white rounded-3xl p-5 md:p-7 shadow-xl border-4 border-brand-purplePale overflow-y-auto max-h-full">
+      <div class="text-center mb-3">
+        <div class="inline-block bg-brand-cyanPale text-brand-cyanDark font-extrabold text-xs tracking-widest uppercase px-4 py-1 rounded-full mb-1">
+          CONCEPT EXPLORATION
+        </div>
+        <h2 class="text-2xl md:text-3xl font-extrabold text-brand-purple">
+          Dynamic Apps & YouTube Experiment
+        </h2>
+      </div>
+
+      <div class="w-full space-y-3 text-xs md:text-sm">
+        <!-- Experiment Card -->
+        <div class="bg-brand-purpleGhost border-2 border-brand-purpleMid p-4 rounded-2xl">
+          <h3 class="font-extrabold text-brand-purple mb-1"> Try This Experiment:</h3>
+          <p class="text-brand-greyDark font-medium mb-3">
+            Go to <a href="https://www.youtube.com" target="_blank" class="text-brand-purple underline font-bold">YouTube.com</a>, refresh the homepage 2-3 times, and observe what happens to the recommended videos. Then come back here and answer below!
+          </p>
+        </div>
+
+        <!-- Question Card -->
+        <div class="bg-brand-yellowPale border-2 border-brand-yellowDark p-4 rounded-2xl">
+          <p class="font-extrabold text-brand-black mb-3">What did you observe on the homepage after refreshing?</p>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <button onclick="handleYoutubeQuiz(false)" class="p-3 bg-white border border-brand-greyMid rounded-xl font-medium text-left hover:border-brand-purple transition">
+              A. The content remained exactly the same every time.
+            </button>
+            <button onclick="handleYoutubeQuiz(true)" id="ytCorrectBtn" class="p-3 bg-white border border-brand-greyMid rounded-xl font-medium text-left hover:border-brand-purple transition">
+              B. The content kept on changing based on feeds.
+            </button>
+          </div>
+          <div id="ytFeedback" class="hidden mt-3 p-3 bg-white border-2 border-brand-purple rounded-xl text-xs">
+            <p class="font-bold text-brand-purple mb-1">✨ Why did this happen?</p>
+            <p class="text-brand-greyDark font-medium">
+              The content kept on changing because there was a backend reading your behavior and suggesting personalized content! This is a <strong>dynamic application</strong> where data changes dynamically and is managed through a backend database.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 5: Database & Visualizing Data Flow (Interactive) -->
+    <section class="slide flex-col items-center max-w-4xl w-full bg-white rounded-3xl p-5 md:p-7 shadow-xl border-4 border-brand-purplePale overflow-y-auto max-h-full">
+      <div class="text-center mb-3">
+        <div class="inline-block bg-brand-purplePale text-brand-purple font-extrabold text-xs tracking-widest uppercase px-4 py-1 rounded-full mb-1">
+          DATABASE & FIREBASE
+        </div>
+        <h2 class="text-2xl md:text-3xl font-extrabold text-brand-purple">
+          What is a Database ?
+        </h2>
+      </div>
+
+      <div class="w-full space-y-4 text-xs md:text-sm">
+        <!-- Interactive Database Builder -->
+        <div class="bg-brand-purpleGhost border-2 border-brand-purpleMid p-4 rounded-2xl">
+          <h3 class="font-extrabold text-brand-purple mb-2">📦 Interactive: What is a Database?</h3>
+          <p class="text-brand-greyDark font-medium mb-3">Click each data item below to store it in the Cloud Database box:</p>
+          
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 items-center">
+            <div class="space-y-2">
+              <div onclick="addDbItem(this, 'User Profile')" class="db-item cursor-pointer p-2 bg-white border border-brand-purpleMid rounded-xl font-bold text-brand-purple hover:bg-brand-purplePale transition shadow-sm">
+                📁 User Profile Data [ Click to Store]
+              </div>
+              <div onclick="addDbItem(this, 'Blog Post')" class="db-item cursor-pointer p-2 bg-white border border-brand-purpleMid rounded-xl font-bold text-brand-purple hover:bg-brand-purplePale transition shadow-sm">
+                📝 Blog Post Content [ Click to Store]
+              </div>
+              <div onclick="addDbItem(this, 'Comments')" class="db-item cursor-pointer p-2 bg-white border border-brand-purpleMid rounded-xl font-bold text-brand-purple hover:bg-brand-purplePale transition shadow-sm">
+                💬 User Comments [ Click to Store]
+              </div>
             </div>
-            <ul class="space-y-3.5 text-sm md:text-base text-alphagen-nearBlack font-semibold">
-              <li class="flex items-center gap-3 bg-white p-3.5 rounded-2xl border border-alphagen-purplePale shadow-sm">
-                <i class="fa-solid fa-check text-emerald-500 text-lg"></i>
-                <span>Installing Pygame Zero library</span>
+
+            <!-- Cloud Database Box -->
+            <div id="cloudStorageBox" class="bg-white border-2 border-dashed border-brand-purple p-3 rounded-2xl text-center min-h-[110px] flex flex-col justify-center items-center">
+              <span class="text-2xl mb-1">☁️</span>
+              <h4 class="font-extrabold text-brand-purple text-xs">Cloud Database Box</h4>
+              <div id="storedItemsList" class="text-[11px] text-brand-greyDark font-medium mt-1">Stored items: 0 / 3</div>
+            </div>
+          </div>
+
+          <!-- One-line Definition Reveal -->
+          <div id="dbDefinitionReveal" class="hidden mt-3 p-3 bg-brand-yellowPale border-2 border-brand-yellowDark rounded-xl text-xs font-bold text-brand-black text-center animate-bounce-subtle">
+            💡 Definition: A database is a structured digital storage system used to persistently save, update, and retrieve live user records across sessions.
+          </div>
+        </div>
+
+        <!-- Interactive Blog Form Data Flow -->
+        <div class="bg-brand-yellowPale border-2 border-brand-yellowDark p-4 rounded-2xl text-center">
+          <h3 class="font-extrabold text-brand-black mb-2">Interactive Data Flow</h3>
+          
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 items-center text-xs">
+            <!-- Form Input -->
+            <div class="bg-white p-3 rounded-xl border border-brand-yellowDark shadow-sm text-left space-y-2">
+              <span class="font-bold text-brand-purple block">📝 1. Submit Blog Post</span>
+              <input type="text" id="blogTitleInput" placeholder="Enter title (e.g. My Trip)..." class="w-full p-1.5 border rounded text-[11px] focus:outline-none">
+              <input type="text" id="blogContentInput" placeholder="Enter content..." class="w-full p-1.5 border rounded text-[11px] focus:outline-none">
+              <button onclick="submitBlogPost()" class="w-full bg-brand-yellow hover:bg-brand-yellowDark text-brand-black font-bold py-1.5 rounded text-[11px] shadow">
+                Submit Post 🚀
+              </button>
+            </div>
+
+            <!-- Database Sync -->
+            <div class="flex flex-col items-center justify-center">
+              <span class="text-2xl font-bold text-brand-purple animate-bounce-subtle">➔ 🗄️ ➔</span>
+              <span class="text-[10px] font-extrabold text-brand-purple uppercase">Cloud Database Sync</span>
+            </div>
+
+            <!-- Live Homepage Preview -->
+            <div class="bg-white p-3 rounded-xl border border-brand-yellowDark shadow-sm text-left">
+              <span class="font-bold text-brand-black block mb-1">📡 2. Live Homepage Feed</span>
+              <div id="liveHomepageFeed" class="bg-brand-purpleGhost p-2.5 rounded-xl text-[11px] space-y-1 min-h-[70px] border border-brand-purpleMid">
+                <span class="text-brand-greyDark italic">[ No posts submitted yet ]</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 6: API Real-Life Analogy (Interactive Animation) -->
+    <section class="slide flex-col items-center max-w-4xl w-full bg-white rounded-3xl p-5 md:p-7 shadow-xl border-4 border-brand-purplePale overflow-y-auto max-h-full">
+      <div class="text-center mb-3">
+        <div class="inline-block bg-brand-cyanPale text-brand-cyanDark font-extrabold text-xs tracking-widest uppercase px-4 py-1 rounded-full mb-1">
+          API CONCEPT
+        </div>
+        <h2 class="text-2xl md:text-3xl font-extrabold text-brand-purple">
+          The API (Application Programming Interface)
+        </h2>
+      </div>
+
+      <div class="w-full space-y-4 text-xs md:text-sm">
+        <!-- Interactive Analogy Stage -->
+        <div class="bg-brand-purpleGhost border-2 border-brand-purpleMid p-4 rounded-2xl text-center">
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 items-center">
+            
+            <!-- Customer -->
+            <div class="bg-white p-3 rounded-xl border border-brand-purple shadow-sm">
+              <span class="text-3xl">🧑‍</span>
+              <h4 class="font-bold text-brand-purple mt-1">Customer / User</h4>
+              <textarea id="apiOrderInput" rows="2" placeholder="Enter food order..." class="w-full mt-2 p-1.5 text-[11px] border rounded-lg bg-brand-purpleGhost focus:outline-none"></textarea>
+              <button onclick="triggerApiRequest()" class="mt-2 w-full bg-brand-yellow hover:bg-brand-yellowDark text-brand-black font-bold py-1.5 px-3 rounded-lg shadow text-[11px] transition">
+                Place Order 🛎️
+              </button>
+            </div>
+
+            <!-- Waiter / Tracker -->
+            <div class="flex flex-col items-center justify-center p-2">
+              <span id="waiterEmoji" class="text-4xl transition-all duration-500 transform">🏃‍♂️</span>
+              <h4 id="apiStatusText" class="font-extrabold text-brand-black mt-2">Waiter (API) Ready</h4>
+              <p id="apiTrackingMsg" class="text-[10px] text-brand-greyDark mt-1">Waiting for order...</p>
+            </div>
+
+            <!-- Kitchen -->
+            <div class="bg-white p-3 rounded-xl border border-brand-purple shadow-sm">
+              <span class="text-3xl">👩‍🍳 🏠</span>
+              <h4 class="font-bold text-brand-purple mt-1">Kitchen (Database)</h4>
+              <div id="kitchenOrderDisplay" class="mt-2 p-2 bg-brand-yellowPale rounded-lg text-[11px] font-medium text-brand-black min-h-[40px] flex items-center justify-center border border-brand-yellowDark">
+                [ Kitchen Idle ]
+              </div>
+              <button onclick="triggerApiResponse()" class="mt-2 w-full bg-brand-purple hover:bg-brand-purpleDark text-white font-bold py-1.5 px-3 rounded-lg shadow text-[11px] transition">
+                Food Ready! (Click) 🍲
+              </button>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Explanation Footer -->
+        <div class="bg-white border-2 border-brand-purple p-3 rounded-2xl text-xs">
+          <p class="font-extrabold text-brand-black">💡 How this represents an API:</p>
+          <p class="text-brand-greyDark font-medium mt-0.5">
+            When you click <strong>Place Order</strong>, the waiter moves to the kitchen <strong>(Request)</strong>. Once processed, clicking <strong>Food Ready</strong> causes the waiter to move back to the Customer <strong>(Response)</strong> to serve your app!
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 7: Firebase Config Setup -->
+    <section class="slide flex-col items-center max-w-4xl w-full bg-white rounded-3xl p-5 md:p-7 shadow-xl border-4 border-brand-purplePale overflow-y-auto max-h-full">
+      <div class="text-center mb-3">
+        <div class="inline-block bg-brand-yellow text-brand-black font-extrabold text-xs tracking-widest uppercase px-3 py-1 rounded-full mb-1">
+          FIREBASE SETUP
+        </div>
+        <h2 class="text-2xl md:text-3xl font-extrabold text-brand-purple">
+          Creating Firebase Config Key
+        </h2>
+      </div>
+
+      <div class="w-full space-y-4 text-xs md:text-sm">
+        <div class="bg-brand-purpleGhost border-2 border-brand-purpleMid p-4 rounded-2xl space-y-2">
+          <h3 class="font-extrabold text-brand-purple">🔥 Why do we need Firebase Config?</h3>
+          <p class="text-brand-greyDark font-medium">
+            To build a dynamic app, we generate an API key and configuration object in Firebase Console so our app securely connects to the cloud database.
+          </p>
+        </div>
+
+        <!-- Prompt example snippet box -->
+        <div class="bg-brand-yellowPale border-2 border-brand-yellowDark p-4 rounded-2xl space-y-2">
+          <h3 class="font-extrabold text-brand-black"> Sample Prompt to Generate API Config Placeholder:</h3>
+          <div class="bg-white p-3 rounded-xl border border-brand-yellowDark font-mono text-[11px] text-brand-purple">
+            "Act as a Firebase expert. Generate the standard firebaseConfig JavaScript code snippet with placeholders for apiKey, authDomain, and projectId."
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 8: Day 3 App Ideation Worksheet -->
+    <section class="slide flex-col items-center max-w-4xl w-full bg-white rounded-3xl p-5 md:p-7 shadow-xl border-4 border-brand-purplePale overflow-y-auto max-h-full">
+      <div class="text-center mb-3">
+        <div class="inline-block bg-brand-cyanPale text-brand-cyanDark font-extrabold text-xs tracking-widest uppercase px-3 py-1 rounded-full mb-1">
+          IDEATION WORKSHEET
+        </div>
+        <h2 class="text-2xl md:text-3xl font-extrabold text-brand-purple">
+          Day 3 App Ideation Worksheet
+        </h2>
+        <p class="text-xs text-brand-greyDark font-medium">
+          Plan your dynamic application before prompting:
+        </p>
+      </div>
+
+      <div class="w-full space-y-3 text-xs md:text-sm">
+        <!-- Skip Note -->
+        <div class="bg-brand-yellowPale border-2 border-brand-yellowDark p-3 rounded-2xl text-[11px] font-bold text-brand-black text-center">
+          💡 Note: If it's the same app from Day 2 that you are extending upon as a dynamic app, you can skip this page!
+        </div>
+
+        <div class="bg-brand-purpleGhost p-3.5 rounded-2xl border-2 border-brand-purpleMid">
+          <label class="block font-bold text-brand-purple mb-1">1. What is the name of your app and its functionality?</label>
+          <input type="text" placeholder="e.g. TravelFeed - Live traveler story sharing app" class="w-full p-2.5 rounded-xl border border-brand-purpleMid text-xs font-medium focus:outline-none bg-white">
+        </div>
+
+        <div class="bg-brand-purpleGhost p-3.5 rounded-2xl border-2 border-brand-purpleMid">
+          <label class="block font-bold text-brand-purple mb-1">2. How many pages does your app have?</label>
+          <input type="text" placeholder="e.g. 2 pages (index.html, submit.html)" class="w-full p-2.5 rounded-xl border border-brand-purpleMid text-xs font-medium focus:outline-none bg-white">
+        </div>
+
+        <div class="bg-brand-purpleGhost p-3.5 rounded-2xl border-2 border-brand-purpleMid">
+          <label class="block font-bold text-brand-purple mb-1">3. What is the color or theme that you are choosing?</label>
+          <input type="text" placeholder="e.g. Ocean blue and bright yellow theme" class="w-full p-2.5 rounded-xl border border-brand-purpleMid text-xs font-medium focus:outline-none bg-white">
+        </div>
+
+        <div class="bg-brand-purpleGhost p-3.5 rounded-2xl border-2 border-brand-purpleMid">
+          <label class="block font-bold text-brand-purple mb-1">4. What is the dynamic functionality that you are adding?</label>
+          <input type="text" placeholder="e.g. Users submit posts stored in Firestore database and viewed live" class="w-full p-2.5 rounded-xl border border-brand-purpleMid text-xs font-medium focus:outline-none bg-white">
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 9: Draft Prompt Structure for Day 3 -->
+    <section class="slide flex-col items-center max-w-5xl w-full bg-white rounded-3xl p-5 md:p-7 shadow-xl border-4 border-brand-purplePale overflow-y-auto max-h-full">
+      <div class="text-center mb-3">
+        <div class="inline-block bg-brand-yellow text-brand-black font-extrabold text-xs tracking-widest uppercase px-3 py-1 rounded-full mb-1">
+          PROMPT ENGINEERING
+        </div>
+        <h2 class="text-2xl md:text-3xl font-extrabold text-brand-purple">
+          Draft Prompt Structure for Day 3 
+        </h2>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-12 gap-4 w-full text-xs">
+        <!-- LEFT COLUMN: Checklist -->
+        <div class="md:col-span-5 bg-brand-purpleGhost p-4 rounded-2xl border-2 border-brand-purpleMid flex flex-col justify-between">
+          <div>
+            <h3 class="font-extrabold text-brand-purple text-sm mb-2">Day 3 Prompt Checklist:</h3>
+            <ul class="space-y-2 font-medium">
+              <li id="chk-persona" class="p-2 rounded-xl bg-white border border-gray-300 transition text-gray-600">
+                👤 <strong>Role / Persona:</strong> e.g. "Act as a Full-Stack AI Developer"
               </li>
-              <li class="flex items-center gap-3 bg-white p-3.5 rounded-2xl border border-alphagen-purplePale shadow-sm">
-                <i class="fa-solid fa-check text-emerald-500 text-lg"></i>
-                <span>Setting up screen dimensions (`WIDTH`, `HEIGHT`)</span>
+              <li id="chk-tech" class="p-2 rounded-xl bg-white border border-gray-300 transition text-gray-600">
+                🌐 <strong>Target Language & Tech:</strong> HTML, Tailwind CSS, JS
               </li>
-              <li class="flex items-center gap-3 bg-white p-3.5 rounded-2xl border border-alphagen-purplePale shadow-sm">
-                <i class="fa-solid fa-check text-emerald-500 text-lg"></i>
-                <span>Adding colors and game actors</span>
+              <li id="chk-pages" class="p-2 rounded-xl bg-white border border-gray-300 transition text-gray-600">
+                📂 <strong>Number of Pages:</strong> e.g. 2 pages (index.html, submit.html)
+              </li>
+              <li id="chk-firebase" class="p-2 rounded-xl bg-white border border-gray-300 transition text-gray-600">
+                🔥 <strong>Firebase Config & API:</strong> firebaseConfig placeholder & SDK
+              </li>
+              <li id="chk-responsive" class="p-2 rounded-xl bg-white border border-gray-300 transition text-gray-600">
+                📱 <strong>Responsiveness:</strong> Mobile & Desktop adaptable
+              </li>
+              <li id="chk-database" class="p-2 rounded-xl bg-white border border-gray-300 transition text-gray-600">
+                🗄️ <strong>Database & Submit:</strong> Firestore write & read live data
+              </li>
+              <li id="chk-assets" class="p-2 rounded-xl bg-white border border-gray-300 transition text-gray-600">
+                🖼️ <strong>Assets & Placeholders:</strong> Image placeholders & logo
               </li>
             </ul>
           </div>
-          
         </div>
 
-        <!-- Today's Session Headings (6 cols) -->
-        <div class="col-span-6 bg-slate-900 border-2 border-slate-800 rounded-3xl p-7 text-white flex flex-col justify-between shadow-lg">
-          <div>
-            <div class="flex items-center justify-between border-b border-slate-800 pb-3 mb-6">
-              <span class="text-sm font-mono text-alphagen-yellow font-extrabold uppercase">Level 2</span>
-              
-            </div>
-            
-            <div class="space-y-4 font-sans">
-              <div class="p-4 bg-slate-950 rounded-2xl border border-slate-800 flex items-center gap-4">
-                <div class="w-10 h-10 rounded-xl bg-amber-400/20 text-amber-400 flex items-center justify-center font-extrabold text-base">1</div>
-                <strong class="text-amber-300 text-lg">Resizing Oversized Actors</strong>
-              </div>
-
-              <div class="p-4 bg-slate-950 rounded-2xl border border-slate-800 flex items-center gap-4">
-                <div class="w-10 h-10 rounded-xl bg-cyan-400/20 text-cyan-400 flex items-center justify-center font-extrabold text-base">2</div>
-                <strong class="text-cyan-300 text-lg">Game Layout Design</strong>
-              </div>
-
-              <div class="p-4 bg-slate-950 rounded-2xl border border-slate-800 flex items-center gap-4">
-                <div class="w-10 h-10 rounded-xl bg-emerald-400/20 text-emerald-400 flex items-center justify-center font-extrabold text-base">3</div>
-                <strong class="text-emerald-300 text-lg">Drawing Native Shapes</strong>
-              </div>
-
-              <div class="p-4 bg-slate-950 rounded-2xl border border-slate-800 flex items-center gap-4">
-                <div class="w-10 h-10 rounded-xl bg-purple-400/20 text-purple-400 flex items-center justify-center font-extrabold text-base">4</div>
-                <strong class="text-purple-300 text-lg">Shape Mini Projects</strong>
-              </div>
-            </div>
+        <!-- RIGHT COLUMN: Textarea & Check Button -->
+        <div class="md:col-span-7 flex flex-col justify-between space-y-3">
+          <div class="bg-brand-purpleGhost p-4 rounded-2xl border-2 border-brand-purpleMid flex-1 flex flex-col">
+            <label for="day3PromptArea" class="block font-extrabold text-brand-purple uppercase mb-2">Write Your Day 3 Prompt:</label>
+            <textarea id="day3PromptArea" oninput="liveCheckDay3Prompt()" rows="7" placeholder="Act as a Full-Stack AI Developer. Build a 2-page dynamic web app using HTML, Tailwind CSS, and JavaScript. Include firebaseConfig API placeholder, form input to submit data, and real-time Firestore database fetching..." class="w-full p-3 rounded-xl border border-brand-purpleMid text-xs font-medium focus:outline-none bg-white text-brand-black resize-none flex-1"></textarea>
           </div>
+
+          <button onclick="checkDay3PromptQuality()" class="w-full bg-brand-purple hover:bg-brand-purpleDark text-white font-bold py-3 rounded-xl shadow transition text-xs md:text-sm flex items-center justify-center gap-2">
+            <span>Check Prompt Quality ✨</span>
+          </button>
+
+          <div id="day3PromptFeedback" class="hidden p-3 rounded-xl bg-white border-2 border-brand-purple text-xs"></div>
         </div>
       </div>
+    </section>
 
-     
-    </div>
-
-    <!-- SLIDE 3: OVERSIZED ACTOR SCENARIO -->
-    <div id="slide-3" class="slide-panel bg-white justify-between">
-      <div>
-        <span class="text-xs uppercase font-extrabold tracking-wider text-alphagen-purple bg-alphagen-purpleGhost px-4 py-1.5 rounded-md border border-alphagen-purplePale">Scenario Check</span>
-        <h2 class="text-3xl font-extrabold text-alphagen-purple mt-2">What do you do if an actor is <span class="text-alphagen-yellowDark">big in size?</span></h2>
-      </div>
-
-      <div class="grid grid-cols-12 gap-8 my-auto items-stretch">
-        <!-- Interactive Q&A (6 cols) -->
-        <div class="col-span-6 bg-alphagen-purpleGhost border-2 border-alphagen-purplePale rounded-3xl p-7 flex flex-col justify-between">
-          <div>
-            <span class="bg-alphagen-purple text-white font-extrabold text-xs px-3.5 py-1 rounded-full uppercase mb-4 inline-block">STEP 1</span>
-            <h3 class="font-extrabold text-lg text-alphagen-nearBlack mb-4">Choose your solution:</h3>
-
-            <div class="space-y-3.5 mb-5">
-              <button onclick="chooseActorAction('change')" id="act-btn-change" class="quiz-option w-full">
-                <span> Option A: I change the actor image</span>
-                <i class="fa-solid fa-circle-xmark text-slate-300 text-xl"></i>
-              </button>
-              <button onclick="chooseActorAction('resize')" id="act-btn-resize" class="quiz-option w-full">
-                <span> Option B: I resize the actor in code</span>
-                <i class="fa-solid fa-circle-check text-slate-300 text-xl"></i>
-              </button>
-            </div>
-
-            <!-- Follow up question -->
-            <div id="followup-q-box" class="hidden opacity-0 transition-all duration-300 bg-white p-5 rounded-2xl border-2 border-alphagen-purplePale">
-              <span class="bg-alphagen-yellowDark text-alphagen-nearBlack font-extrabold text-xs px-3 py-1 rounded-full uppercase mb-3 inline-block">STEP 2</span>
-              <h4 class="font-extrabold text-sm text-alphagen-nearBlack mb-3">Which values need to be changed to resize the actor?</h4>
-
-              <div class="space-y-2.5">
-                <button onclick="chooseResizeValue('color')" class="quiz-option w-full text-xs p-3">
-                  <span>A) Color and Rotation of the actor</span>
-                </button>
-                <button onclick="chooseResizeValue('width_height')" class="quiz-option w-full text-xs p-3">
-                  <span>B) Width and Height of the actor</span>
-                </button>
-              </div>
-            </div>
-          </div>
-
-         
+    <!-- SLIDE 10: Project Review & Checklist -->
+    <section class="slide flex-col items-center max-w-4xl w-full bg-white rounded-3xl p-5 md:p-7 shadow-xl border-4 border-brand-purplePale overflow-y-auto max-h-full">
+      <div class="text-center mb-4">
+        <div class="inline-block bg-brand-cyanPale text-brand-cyanDark font-extrabold text-xs tracking-widest uppercase px-4 py-1 rounded-full mb-1">
+          PROJECT REVIEW
         </div>
+        <h2 class="text-2xl md:text-3xl font-extrabold text-brand-purple">
+          Development Checklist & Export
+        </h2>
+        <p class="text-xs md:text-sm text-brand-greyDark font-medium">
+          Check off your completed milestones for Day 3:
+        </p>
+      </div>
 
-        <!-- Visual Stage Preview (6 cols) -->
-        <div class="col-span-6 bg-slate-900 border-2 border-slate-800 rounded-3xl p-7 text-white flex flex-col justify-between shadow-lg relative overflow-hidden">
-          <div class="border-b border-slate-800 pb-3 mb-2 flex justify-between items-center z-10">
-            <span class="text-xs font-mono text-alphagen-yellow font-bold uppercase">GAME WINDOW PREVIEW</span>
-           
-          </div>
+      <div class="w-full space-y-3 text-xs md:text-sm">
+        <label class="flex items-center space-x-3 p-3.5 bg-brand-purpleGhost rounded-2xl border-2 border-brand-purpleMid cursor-pointer hover:border-brand-purple transition">
+          <input type="checkbox" class="w-5 h-5 accent-brand-purple rounded" onchange="playTone(600, 'sine', 0.1)">
+          <span class="font-bold text-brand-black">Did you create a fully functional dynamic web app?</span>
+        </label>
 
-          <div class="game-grid-bg my-auto w-full h-[280px] rounded-2xl border border-slate-800 relative flex items-center justify-center overflow-hidden">
-            <!-- Simulated Rocket -->
-            <div id="preview-actor-box" class="transition-all duration-500 transform scale-150 flex flex-col items-center justify-center text-center">
-              <div class="text-9xl filter drop-shadow-lg">🚀</div>
-              <span id="actor-size-label" class="text-xs font-mono bg-black/80 px-3 py-1 rounded-lg text-amber-400 mt-2 border border-amber-400/40">Size: Oversized!</span>
-            </div>
-          </div>
+        <label class="flex items-center space-x-3 p-3.5 bg-brand-purpleGhost rounded-2xl border-2 border-brand-purpleMid cursor-pointer hover:border-brand-purple transition">
+          <input type="checkbox" class="w-5 h-5 accent-brand-purple rounded" onchange="playTone(600, 'sine', 0.1)">
+          <span class="font-bold text-brand-black">Did you successfully connect it to Firebase backend database?</span>
+        </label>
 
-          <div class="text-xs text-slate-400 font-mono text-center z-10">
-            Screen: <span class="text-alphagen-cyan">WIDTH = 800, HEIGHT = 600</span>
-          </div>
+        <label class="flex items-center space-x-3 p-3.5 bg-brand-purpleGhost rounded-2xl border-2 border-brand-purpleMid cursor-pointer hover:border-brand-purple transition">
+          <input type="checkbox" class="w-5 h-5 accent-brand-purple rounded" onchange="playTone(600, 'sine', 0.1)">
+          <span class="font-bold text-brand-black">Did you see user data getting reflected live into the database?</span>
+        </label>
+
+        <label class="flex items-center space-x-3 p-3.5 bg-brand-purpleGhost rounded-2xl border-2 border-brand-purpleMid cursor-pointer hover:border-brand-purple transition">
+          <input type="checkbox" class="w-5 h-5 accent-brand-purple rounded" onchange="playTone(600, 'sine', 0.1)">
+          <span class="font-bold text-brand-black">Did you export or save your code and data into a single file?</span>
+        </label>
+      </div>
+    </section>
+
+    <!-- SLIDE 11: Day 3 Wrap-Up & Knowledge Check -->
+    <section class="slide flex-col items-center max-w-4xl w-full bg-white rounded-3xl p-5 md:p-7 shadow-xl border-4 border-brand-purplePale overflow-y-auto max-h-full">
+      <div class="text-center mb-3">
+        <div class="inline-block bg-brand-yellow text-brand-black font-extrabold text-xs tracking-widest uppercase px-3 py-1 rounded-full mb-1">
+          WRAP-UP
         </div>
+        <h2 class="text-2xl md:text-3xl font-extrabold text-brand-purple">
+          Day 3 Wrap-Up Quiz 🏆
+        </h2>
+        <p class="text-xs text-brand-greyDark font-medium">
+          Answer all questions to complete Day 3:
+        </p>
       </div>
 
-     
-    </div>
-
-    <!-- SLIDE 4: RESIZING SYNTAX & LIVE RESIZER TOOL -->
-    <div id="slide-4" class="slide-panel bg-white justify-between">
-      <div>
-        <span class="text-xs uppercase font-extrabold tracking-wider text-alphagen-purple bg-alphagen-purpleGhost px-4 py-1.5 rounded-md border border-alphagen-purplePale">Syntax &amp; Practice</span>
-        <h2 class="text-3xl font-extrabold text-alphagen-purple mt-1">Resizing Syntax 
-       
-      </div>
-
-      <div class="grid grid-cols-12 gap-6 my-auto items-stretch">
-        <!-- Interactive Sliders (5 cols) -->
-        <div class="col-span-5 bg-alphagen-purpleGhost border-2 border-alphagen-purplePale rounded-3xl p-6 flex flex-col justify-between">
-          <div>
-            <h3 class="font-extrabold text-sm text-alphagen-nearBlack mb-4">Adjust Actor Size:</h3>
-
-            <!-- Width Slider -->
-            <div class="bg-white p-4 rounded-2xl border-2 border-alphagen-purplePale mb-4">
-              <div class="flex justify-between items-center mb-2">
-                <span class="text-xs font-bold text-alphagen-darkGrey">Width (X value):</span>
-                <span id="slider-width-val" class="text-xs font-mono font-extrabold text-alphagen-purple bg-alphagen-purplePale px-2.5 py-1 rounded-md">80 px</span>
-              </div>
-              <input type="range" id="resize-width-slider" min="30" max="220" value="80" oninput="updateActorResizeDemo()" class="w-full accent-alphagen-purple cursor-pointer">
-            </div>
-
-            <!-- Height Slider -->
-            <div class="bg-white p-4 rounded-2xl border-2 border-alphagen-purplePale mb-4">
-              <div class="flex justify-between items-center mb-2">
-                <span class="text-xs font-bold text-alphagen-darkGrey">Height (Y value):</span>
-                <span id="slider-height-val" class="text-xs font-mono font-extrabold text-alphagen-purple bg-alphagen-purplePale px-2.5 py-1 rounded-md">80 px</span>
-              </div>
-              <input type="range" id="resize-height-slider" min="30" max="220" value="80" oninput="updateActorResizeDemo()" class="w-full accent-alphagen-purple cursor-pointer">
-            </div>
-          </div>
-
-          <div class="bg-white border-2 border-alphagen-purplePale p-3.5 rounded-2xl text-xs text-alphagen-purple font-medium leading-tight">
-            <strong>Syntax Formula:</strong><br>
-            <code class="font-mono font-bold text-purple-700">pygame.transform.scale(image, (width, height))</code>
+      <div class="w-full space-y-3 text-left mb-3 text-xs">
+        <!-- Q1 -->
+        <div class="bg-brand-purpleGhost p-3 rounded-2xl border-2 border-brand-purpleMid">
+          <p class="font-bold text-brand-black mb-2">1. What is a database and why is it needed for a dynamic app?</p>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+            <button onclick="handleFinalQuiz(this, true)" class="fq-btn p-2.5 bg-white border border-brand-greyMid rounded-xl font-medium hover:border-brand-purple transition">
+              A structured storage system required to persistently save, update, and retrieve live user data across sessions.
+            </button>
+            <button onclick="handleFinalQuiz(this, false)" class="fq-btn p-2.5 bg-white border border-brand-greyMid rounded-xl font-medium hover:border-brand-purple transition">
+              It is a graphic design folder used exclusively to store banner pictures.
+            </button>
           </div>
         </div>
 
-        <!-- Live Code & Scaled Actor Display (7 cols) -->
-        <div class="col-span-7 bg-slate-900 border-2 border-slate-800 rounded-3xl p-6 text-white flex flex-col justify-between shadow-lg font-mono">
-          <div>
-            <div class="border-b border-slate-800 pb-2 mb-3 text-xs text-alphagen-yellow font-bold flex justify-between">
-              <span>PYGAME CODE</span>
-             
-            </div>
-
-            <div class="bg-slate-950 p-4 rounded-2xl border border-slate-800 text-xs leading-relaxed space-y-1">
-              <div><span class="text-purple-400 font-bold">import</span> pygame</div>
-              <br>
-              <div>hero = Actor(<span class="text-yellow-300">'spaceship'</span>)</div>
-              <div class="text-slate-500"># Resize actor image using transform scale</div>
-              <div class="bg-slate-900 p-2.5 rounded-xl border-l-4 border-alphagen-yellow text-amber-300">
-                hero._surf = pygame.transform.scale(<br>
-                &nbsp;&nbsp;hero._surf, (<span id="code-w-val" class="text-cyan-300">80</span>, <span id="code-h-val" class="text-cyan-300">80</span>)<br>
-                )
-              </div>
-            </div>
+        <!-- Q2 -->
+        <div class="bg-brand-purpleGhost p-3 rounded-2xl border-2 border-brand-purpleMid">
+          <p class="font-bold text-brand-black mb-2">2. Under which variable name did the Firebase API configuration get created?</p>
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 text-center font-bold">
+            <button onclick="handleFinalQuiz(this, false)" class="fq-btn p-2 bg-white border border-brand-greyMid rounded-xl hover:border-brand-purple transition">apiKeyData</button>
+            <button onclick="handleFinalQuiz(this, true)" class="fq-btn p-2 bg-white border border-brand-greyMid rounded-xl hover:border-brand-purple transition">firebaseConfig</button>
+            <button onclick="handleFinalQuiz(this, false)" class="fq-btn p-2 bg-white border border-brand-greyMid rounded-xl hover:border-brand-purple transition">dbInstance</button>
+            <button onclick="handleFinalQuiz(this, false)" class="fq-btn p-2 bg-white border border-brand-greyMid rounded-xl hover:border-brand-purple transition">cloudKey</button>
           </div>
+        </div>
 
-          <!-- Live Canvas Actor Box with actual scaling representation -->
-          <div class="game-grid-bg h-[160px] my-2 rounded-2xl border border-slate-800 flex items-center justify-center relative overflow-hidden">
-            <div id="live-scaled-actor" class="flex items-center justify-center transition-all duration-75 bg-purple-500/20 border-2 border-dashed border-purple-400 rounded-xl overflow-hidden">
-              <span id="live-actor-emoji" class="leading-none transition-all duration-75 inline-block select-none" style="font-size: 80px;">🚀</span>
-            </div>
-          </div>
-
-          <div class="text-xs text-slate-400 flex justify-between">
-            <span>Target Dimensions:</span>
-            <strong id="actor-dim-tag" class="text-amber-400">80 x 80 px</strong>
+        <!-- Q3 -->
+        <div class="bg-brand-purpleGhost p-3 rounded-2xl border-2 border-brand-purpleMid">
+          <p class="font-bold text-brand-black mb-2">3. What are the two essential steps needed for an API call?</p>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+            <button onclick="handleFinalQuiz(this, true)" class="fq-btn p-2.5 bg-white border border-brand-greyMid rounded-xl font-medium hover:border-brand-purple transition">
+              Request and Response
+            </button>
+            <button onclick="handleFinalQuiz(this, false)" class="fq-btn p-2.5 bg-white border border-brand-greyMid rounded-xl font-medium hover:border-brand-purple transition">
+              Compile and Debug
+            </button>
           </div>
         </div>
       </div>
 
-    
-    </div>
-
-    <!-- SLIDE 5: ACTOR RESIZING LAB CHALLENGE -->
-    <div id="slide-5" class="slide-panel bg-white justify-between">
-      <div>
-        <span class="text-xs uppercase font-extrabold tracking-wider text-alphagen-purple bg-alphagen-purpleGhost px-4 py-1.5 rounded-md border border-alphagen-purplePale">Lab Practice</span>
-        <h2 class="text-3xl font-extrabold text-alphagen-purple mt-1">Coding Challenge</h2>
-       
-      </div>
-
-      <div class="my-auto bg-alphagen-purpleGhost border-2 border-alphagen-purplePale rounded-3xl p-8 shadow-sm">
-        <h3 class="font-extrabold text-2xl text-alphagen-nearBlack mb-6 flex items-center gap-3">
-          <i class="fa-solid fa-list-check text-alphagen-purple"></i>
-          <span>Complete Checklist Steps in IDLE:</span>
+      <!-- In-Place Victory Banner -->
+      <div id="victoryBanner" class="hidden w-full bg-brand-yellow p-4 rounded-2xl text-center shadow-lg border-2 border-brand-yellowDark animate-bounce-subtle">
+        <h3 class="text-lg md:text-xl font-extrabold text-brand-black mb-1">
+          🎉 Day 3 Complete!
         </h3>
-
-        <div class="space-y-5">
-          <label class="bg-white p-5 rounded-2xl border-2 border-alphagen-purplePale flex items-center gap-5 cursor-pointer hover:border-alphagen-purple transition shadow-sm">
-            <input type="checkbox" onchange="checkLabTask(this)" class="w-7 h-7 accent-alphagen-purple rounded cursor-pointer">
-            <span class="text-lg font-bold text-alphagen-nearBlack">1. Download an actor image of your choice</span>
-          </label>
-
-          <label class="bg-white p-5 rounded-2xl border-2 border-alphagen-purplePale flex items-center gap-5 cursor-pointer hover:border-alphagen-purple transition shadow-sm">
-            <input type="checkbox" onchange="checkLabTask(this)" class="w-7 h-7 accent-alphagen-purple rounded cursor-pointer">
-            <span class="text-lg font-bold text-alphagen-nearBlack">2. Add the actor to your game window</span>
-          </label>
-
-          <label class="bg-white p-5 rounded-2xl border-2 border-alphagen-purplePale flex items-center gap-5 cursor-pointer hover:border-alphagen-purple transition shadow-sm">
-            <input type="checkbox" onchange="checkLabTask(this)" class="w-7 h-7 accent-alphagen-purple rounded cursor-pointer">
-            <span class="text-lg font-bold text-alphagen-nearBlack">3. Change the size of your actor</span>
-          </label>
-
-          <label class="bg-white p-5 rounded-2xl border-2 border-alphagen-purplePale flex items-center gap-5 cursor-pointer hover:border-alphagen-purple transition shadow-sm">
-            <input type="checkbox" onchange="checkLabTask(this)" class="w-7 h-7 accent-alphagen-purple rounded cursor-pointer">
-            <span class="text-lg font-bold text-alphagen-nearBlack">4. Call and draw the actor with the changed size inside draw()</span>
-          </label>
-        </div>
-      </div>
-
-      <div id="checklist-progress-box" class="bg-white border-2 border-alphagen-purplePale p-3.5 rounded-2xl text-sm font-extrabold text-alphagen-purple text-center">
-        Checklist Progress: <span id="checklist-count-text" class="text-alphagen-yellowDark">0 / 4 Tasks Completed</span>
-      </div>
-    </div>
-
-    <!-- SLIDE 6: GAME LAYOUT DESIGN STUDIO & CHALLENGE -->
-    <div id="slide-6" class="slide-panel bg-white justify-between">
-      <div>
-        <span class="text-xs uppercase font-extrabold tracking-wider text-alphagen-purple bg-alphagen-purpleGhost px-4 py-1.5 rounded-md border border-alphagen-purplePale">Stage Design Challenge</span>
-        <h2 class="text-3xl font-extrabold text-alphagen-purple mt-1">Game Layout Design Challenge</h2>
        
       </div>
+    </section>
 
-      <div class="grid grid-cols-12 gap-6 my-auto items-stretch">
-        <!-- Interactive Reference Layout Selector (5 cols) -->
-        <div class="col-span-5 bg-alphagen-purpleGhost border-2 border-alphagen-purplePale rounded-3xl p-6 flex flex-col justify-between">
-          <div>
-            <h3 class="font-extrabold text-sm text-alphagen-nearBlack uppercase mb-3">1. Select Reference Layout:</h3>
+  </main>
 
-            <div class="space-y-3">
-              <button onclick="selectGameLayout('space')" id="layout-btn-space" class="w-full bg-white border-2 border-alphagen-purple p-3.5 rounded-2xl text-left btn-interactive font-extrabold text-sm text-alphagen-nearBlack flex items-center justify-between">
-                <span> 1. Space Battle Scene</span>
-                <span class="bg-purple-100 text-purple-800 text-xs px-2.5 py-0.5 rounded-full">Dark Blue</span>
-              </button>
+  <!-- FOOTER NAVIGATION -->
+  <footer class="bg-white border-t-2 border-brand-purplePale px-6 py-3.5 flex justify-between items-center z-20 shadow-lg">
+    <button id="prevBtn" onclick="prevSlide()" class="bg-brand-purpleGhost hover:bg-brand-purplePale text-brand-purple font-extrabold px-5 py-2.5 rounded-2xl transition border-2 border-brand-purpleMid disabled:opacity-40 disabled:cursor-not-allowed flex items-center gap-2 text-sm md:text-base">
+      ⬅️ Previous
+    </button>
 
-              <button onclick="selectGameLayout('garden')" id="layout-btn-garden" class="w-full bg-white border-2 border-alphagen-purplePale p-3.5 rounded-2xl text-left btn-interactive font-extrabold text-sm text-alphagen-nearBlack flex items-center justify-between">
-                <span> 2. House &amp; Garden Scene</span>
-                <span class="bg-emerald-100 text-emerald-800 text-xs px-2.5 py-0.5 rounded-full">Sky &amp; Grass</span>
-              </button>
+    <div class="hidden md:flex items-center space-x-2" id="dotContainer"></div>
 
-              <button onclick="selectGameLayout('traffic')" id="layout-btn-traffic" class="w-full bg-white border-2 border-alphagen-purplePale p-3.5 rounded-2xl text-left btn-interactive font-extrabold text-sm text-alphagen-nearBlack flex items-center justify-between">
-                <span> 3. Road &amp; Traffic Scenario</span>
-                <span class="bg-amber-100 text-amber-800 text-xs px-2.5 py-0.5 rounded-full">Asphalt Road</span>
-              </button>
-            </div>
+    <button id="nextBtn" onclick="nextSlide()" class="bg-brand-yellow hover:bg-brand-yellowDark text-brand-black font-extrabold px-5 py-2.5 rounded-2xl transition shadow-md flex items-center gap-2 text-sm md:text-base">
+      Next ➡️
+    </button>
+  </footer>
 
-            <h3 class="font-extrabold text-sm text-alphagen-nearBlack uppercase mt-5 mb-2">2. IDLE Coding Checklist:</h3>
+  <!-- AUDIO SYNTHESIZER & INTERACTIVE LOGIC JS -->
+  <script>
+    const AudioContext = window.AudioContext || window.webkitAudioContext;
+    let audioCtx = null;
 
-            <div class="space-y-2.5">
-              <label class="bg-white p-3 rounded-xl border-2 border-alphagen-purplePale flex items-center gap-3 cursor-pointer">
-                <input type="checkbox" onchange="playSound('correct')" class="w-5 h-5 accent-alphagen-purple rounded">
-                <span class="text-xs font-bold text-alphagen-nearBlack">Space Battle Layout Completed</span>
-              </label>
-              <label class="bg-white p-3 rounded-xl border-2 border-alphagen-purplePale flex items-center gap-3 cursor-pointer">
-                <input type="checkbox" onchange="playSound('correct')" class="w-5 h-5 accent-alphagen-purple rounded">
-                <span class="text-xs font-bold text-alphagen-nearBlack">House &amp; Garden Layout Completed</span>
-              </label>
-              <label class="bg-white p-3 rounded-xl border-2 border-alphagen-purplePale flex items-center gap-3 cursor-pointer">
-                <input type="checkbox" onchange="playSound('correct')" class="w-5 h-5 accent-alphagen-purple rounded">
-                <span class="text-xs font-bold text-alphagen-nearBlack">Road &amp; Traffic Scenario Completed</span>
-              </label>
-            </div>
-          </div>
-        </div>
+    function initAudio() {
+      if (!audioCtx) audioCtx = new AudioContext();
+    }
 
-        <!-- Stage Reference Canvas (7 cols) -->
-        <div class="col-span-7 bg-slate-900 border-2 border-slate-800 rounded-3xl p-6 text-white flex flex-col justify-between shadow-lg">
-          <div class="flex justify-between items-center border-b border-slate-800 pb-2 mb-2">
-           
-          </div>
+    function playTone(freq, type = 'sine', duration = 0.15) {
+      initAudio();
+      if (!audioCtx) return;
 
-          <!-- Dynamic Backdrop Stage -->
-          <div id="stage-visual-canvas" class="w-full h-[230px] rounded-2xl border-2 border-slate-700 relative overflow-hidden transition-all duration-300 bg-[#091124]">
-            <!-- Dynamic elements loaded via JS -->
-          </div>
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
 
-          <!-- Reference Position Tags -->
-          <div class="bg-slate-950 p-3.5 rounded-xl border border-slate-800 font-mono text-xs text-slate-300 flex justify-between">
-            <span id="pos-info-1">Alien 1: pos = (180, 80)</span>
-            <span id="pos-info-2">Alien 2: pos = (420, 80)</span>
-            <span id="pos-info-3">Spaceship: pos = (300, 340)</span>
-          </div>
-        </div>
-      </div>
+      osc.type = type;
+      osc.frequency.value = freq;
 
-     
-    </div>
+      gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + duration);
 
-    <!-- SLIDE 7: SHAPES EXPLORER & SYNTAX -->
-    <div id="slide-7" class="slide-panel bg-white justify-between">
-      <div>
-        <span class="text-xs uppercase font-extrabold tracking-wider text-alphagen-purple bg-alphagen-purpleGhost px-4 py-1.5 rounded-md border border-alphagen-purplePale">Native Shapes</span>
-        <h2 class="text-3xl font-extrabold text-alphagen-purple mt-1">Drawing Shapes</h2>
-       
-      </div>
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
 
-      <div class="grid grid-cols-12 gap-6 my-auto items-stretch">
-        <!-- Shape Controls & Color Pickers (5 cols) -->
-        <div class="col-span-5 bg-alphagen-purpleGhost border-2 border-alphagen-purplePale rounded-3xl p-5 flex flex-col justify-between">
-          <div>
-            <h3 class="font-extrabold text-xs text-alphagen-nearBlack uppercase mb-2">1. Select Shape Type:</h3>
+      osc.start();
+      osc.stop(audioCtx.currentTime + duration);
+    }
 
-            <div class="grid grid-cols-2 gap-2 mb-3">
-              <button onclick="selectShape('line')" id="shape-btn-line" class="bg-alphagen-purple text-white p-2.5 rounded-xl font-bold text-xs btn-interactive flex items-center justify-center gap-2">
-                <span>➖ Line</span>
-              </button>
-              <button onclick="selectShape('square')" id="shape-btn-square" class="bg-white border-2 border-alphagen-purplePale text-alphagen-nearBlack p-2.5 rounded-xl font-bold text-xs btn-interactive flex items-center justify-center gap-2">
-                <span>🔲 Square (Border)</span>
-              </button>
-              <button onclick="selectShape('rect')" id="shape-btn-rect" class="bg-white border-2 border-alphagen-purplePale text-alphagen-nearBlack p-2.5 rounded-xl font-bold text-xs btn-interactive flex items-center justify-center gap-2">
-                <span>▮ Rect (Border)</span>
-              </button>
-              <button onclick="selectShape('filled_rect')" id="shape-btn-filled_rect" class="bg-white border-2 border-alphagen-purplePale text-alphagen-nearBlack p-2.5 rounded-xl font-bold text-xs btn-interactive flex items-center justify-center gap-2">
-                <span>⬛ Filled Square/Rect</span>
-              </button>
-              <button onclick="selectShape('circle')" id="shape-btn-circle" class="bg-white border-2 border-alphagen-purplePale text-alphagen-nearBlack p-2.5 rounded-xl font-bold text-xs btn-interactive flex items-center justify-center gap-2">
-                <span>⚪ Circle (Outline)</span>
-              </button>
-              <button onclick="selectShape('filled_circle')" id="shape-btn-filled_circle" class="bg-white border-2 border-alphagen-purplePale text-alphagen-nearBlack p-2.5 rounded-xl font-bold text-xs btn-interactive flex items-center justify-center gap-2">
-                <span>🟡 Filled Circle</span>
-              </button>
-            </div>
+    function playCorrectSound() {
+      playTone(523.25, 'triangle', 0.1);
+      setTimeout(() => playTone(659.25, 'triangle', 0.15), 100);
+      setTimeout(() => playTone(783.99, 'triangle', 0.2), 200);
+    }
 
-            <h3 class="font-extrabold text-xs text-alphagen-nearBlack uppercase mb-2">2. Toggle Color:</h3>
-            <div class="flex gap-3 mb-3">
-              <button onclick="selectShapeColor('yellow')" class="w-8 h-8 rounded-full bg-yellow-400 border-2 border-slate-800 btn-interactive"></button>
-              <button onclick="selectShapeColor('cyan')" class="w-8 h-8 rounded-full bg-cyan-400 border-2 border-slate-800 btn-interactive"></button>
-              <button onclick="selectShapeColor('coral')" class="w-8 h-8 rounded-full bg-rose-500 border-2 border-slate-800 btn-interactive"></button>
-              <button onclick="selectShapeColor('emerald')" class="w-8 h-8 rounded-full bg-emerald-400 border-2 border-slate-800 btn-interactive"></button>
-            </div>
+    function playWrongSound() {
+      playTone(220, 'sawtooth', 0.15);
+      setTimeout(() => playTone(180, 'sawtooth', 0.2), 120);
+    }
 
-            <!-- Size Slider -->
-            <div class="bg-white p-3 rounded-2xl border border-alphagen-purplePale">
-              <div class="flex justify-between items-center mb-1">
-                <span class="text-xs font-bold text-alphagen-darkGrey">Size / Radius Value:</span>
-                <span id="shape-param-val" class="text-xs font-mono font-bold text-alphagen-purple">100 px</span>
-              </div>
-              <input type="range" id="shape-size-slider" min="30" max="180" value="100" oninput="updateShapeRenderer()" class="w-full accent-alphagen-purple cursor-pointer">
-            </div>
-          </div>
+    // Navigation State
+    let currentSlide = 1;
+    const totalSlides = 11;
 
-          <div id="shape-syntax-note" class="bg-white border-2 border-alphagen-purplePale p-2.5 rounded-2xl text-[11px] font-semibold text-alphagen-purple">
-            Line requires start point (x1, y1) and end point (x2, y2).
-          </div>
-        </div>
+    function renderDots() {
+      const container = document.getElementById('dotContainer');
+      container.innerHTML = '';
+      for (let i = 1; i <= totalSlides; i++) {
+        const dot = document.createElement('div');
+        dot.className = `w-2.5 h-2.5 rounded-full cursor-pointer transition-all ${i === currentSlide ? 'bg-brand-purple w-5' : 'bg-brand-greyMid opacity-50'}`;
+        dot.onclick = () => goToSlide(i);
+        container.appendChild(dot);
+      }
+    }
 
-        <!-- Render Canvas & Dynamic Code (7 cols) -->
-        <div class="col-span-7 bg-slate-900 border-2 border-slate-800 rounded-3xl p-5 text-white flex flex-col justify-between shadow-lg font-mono">
-          <div class="flex justify-between items-center border-b border-slate-800 pb-2 mb-2">
-            <span>LIVE SHAPE CANVAS</span>
-            <span id="shape-name-tag" class="text-xs text-amber-300 font-bold">screen.draw.line()</span>
-          </div>
+    function updateSlideDisplay() {
+      document.querySelectorAll('.slide').forEach((slide, idx) => {
+        if (idx + 1 === currentSlide) {
+          slide.classList.add('active');
+        } else {
+          slide.classList.remove('active');
+        }
+      });
 
-          <!-- Canvas -->
-          <div class="game-grid-bg h-[150px] rounded-2xl border border-slate-800 flex items-center justify-center relative overflow-hidden my-1">
-            <canvas id="shapeCanvas" width="400" height="140" class="w-full h-full"></canvas>
-          </div>
+      document.getElementById('slideCounter').innerText = `${currentSlide} / ${totalSlides}`;
+      document.getElementById('slideSelect').value = currentSlide;
 
-          <!-- Dynamic Pygame Code Output -->
-          <div class="bg-slate-950 p-3 rounded-2xl border border-slate-800 text-[11px] leading-relaxed">
-            <span class="text-purple-400">def</span> <span class="text-blue-300">draw</span>():<br>
-            &nbsp;&nbsp;screen.clear()<br>
-            &nbsp;&nbsp;<span id="shape-code-line" class="text-amber-300 font-bold">screen.draw.line((100, 70), (300, 70), 'yellow')</span>
-          </div>
-        </div>
-      </div>
+      document.getElementById('prevBtn').disabled = (currentSlide === 1);
+      if (currentSlide === totalSlides) {
+        document.getElementById('nextBtn').innerText = 'Finish 🏆';
+      } else {
+        document.getElementById('nextBtn').innerText = 'Next ➡️';
+      }
 
-     
-    </div>
+      renderDots();
+    }
 
-    <!-- SLIDE 8: SHAPE PROJECTS LAB CHALLENGE -->
-    <div id="slide-8" class="slide-panel bg-white justify-between">
-      <div>
-        <span class="text-xs uppercase font-extrabold tracking-wider text-alphagen-purple bg-alphagen-purpleGhost px-4 py-1.5 rounded-md border border-alphagen-purplePale">Lab Practice</span>
-        <h2 class="text-3xl font-extrabold text-alphagen-purple mt-1">Coding Challenge</h2>
-        
-      </div>
+    function goToSlide(n) {
+      if (n >= 1 && n <= totalSlides) {
+        currentSlide = n;
+        updateSlideDisplay();
+      }
+    }
 
-      <div class="grid grid-cols-12 gap-6 my-auto items-stretch">
-        <!-- Project Checklist (6 cols) -->
-        <div class="col-span-6 space-y-4">
-          <!-- Project 1 Card -->
-          <div class="bg-alphagen-purpleGhost border-2 border-alphagen-purplePale rounded-3xl p-6 flex flex-col justify-between">
-            <div>
-              <div class="flex items-center gap-3 mb-3">
-                <input type="checkbox" onchange="playSound('correct')" class="w-6 h-6 accent-alphagen-purple rounded cursor-pointer">
-                <h3 class="font-extrabold text-base text-alphagen-nearBlack"> Tic-Tac-Toe Grid </h3>
-              </div>
-              <p class="text-xs text-alphagen-darkGrey font-semibold leading-relaxed pl-9">
-                Draw <strong>4 lines</strong> (2 vertical, 2 horizontal) to create the grid. Then draw circles (⭕) and diagonal lines (❌) as noughts and crosses
-              </p>
-            </div>
-            
-          </div>
+    function nextSlide() {
+      if (currentSlide === totalSlides) {
+        triggerFinishCelebration();
+      } else if (currentSlide < totalSlides) {
+        currentSlide++;
+        updateSlideDisplay();
+      }
+    }
 
-          <!-- Project 2 Card -->
-          <div class="bg-alphagen-yellowPale border-2 border-yellow-300 rounded-3xl p-6 flex flex-col justify-between">
-            <div>
-              <div class="flex items-center gap-3 mb-3">
-                <input type="checkbox" onchange="playSound('correct')" class="w-6 h-6 accent-yellow-600 rounded cursor-pointer">
-                <h3 class="font-extrabold text-base text-alphagen-nearBlack"> 3x3 Colored Chessboard </h3>
-              </div>
-              <p class="text-xs text-alphagen-darkGrey font-semibold leading-relaxed pl-9">
-                Use filled rectangles (<code class="font-mono">screen.draw.filled_rect</code>) of alternating colors (e.g. purple &amp; white) to draw a 3x3 board!
-              </p>
-            </div>
-            
-          </div>
-        </div>
+    function prevSlide() {
+      if (currentSlide > 1) {
+        currentSlide--;
+        updateSlideDisplay();
+      }
+    }
 
-        <!-- Visual References Display (6 cols) -->
-        <div class="col-span-6 bg-slate-900 border-2 border-slate-800 rounded-3xl p-6 text-white flex flex-col justify-between shadow-lg">
-          <div class="flex justify-between items-center border-b border-slate-800 pb-2 mb-2">
-            <span class="text-xs font-mono text-alphagen-yellow font-bold uppercase">VISUAL REFERENCE GUIDES</span>
-            <span class="text-[10px] bg-alphagen-purple px-2 py-0.5 rounded text-white font-bold">TARGET OUTPUT</span>
-          </div>
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight') nextSlide();
+      if (e.key === 'ArrowLeft') prevSlide();
+    });
 
-          <!-- Visual Mini Previews -->
-          <div class="grid grid-cols-2 gap-4 my-auto">
-            <!-- Tic Tac Toe Preview -->
-            <div class="bg-slate-950 p-4 rounded-2xl border border-slate-800 text-center flex flex-col items-center">
-              <span class="text-xs font-bold text-cyan-300 mb-2">Tic-Tac-Toe Window</span>
-              <div class="w-32 h-32 bg-slate-900 rounded-xl border border-slate-700 relative flex items-center justify-center p-2">
-                <!-- SVG Grid -->
-                <svg viewBox="0 0 100 100" class="w-full h-full stroke-cyan-400 stroke-2">
-                  <line x1="33" y1="5" x2="33" y2="95" />
-                  <line x1="66" y1="5" x2="66" y2="95" />
-                  <line x1="5" y1="33" x2="95" y2="33" />
-                  <line x1="5" y1="66" x2="95" y2="66" />
-                  <!-- Circle & Cross -->
-                  <circle cx="18" cy="18" r="10" fill="none" class="stroke-yellow-400 stroke-2" />
-                  <line x1="42" y1="42" x2="58" y2="58" class="stroke-rose-400 stroke-2" />
-                  <line x1="58" y1="42" x2="42" y2="58" class="stroke-rose-400 stroke-2" />
-                </svg>
-              </div>
-            </div>
+    // Slide 2 Quiz Handler
+    function handleRecapAnswer(btn, isCorrect) {
+      if (isCorrect) {
+        playCorrectSound();
+        btn.classList.remove('bg-white', 'border-brand-greyMid');
+        btn.classList.add('bg-green-500', 'text-white', 'border-green-600', 'font-bold');
+      } else {
+        playWrongSound();
+        btn.classList.remove('bg-white', 'border-brand-greyMid');
+        btn.classList.add('bg-red-100', 'border-red-400', 'text-red-700');
+      }
+    }
 
-            <!-- Chessboard Preview -->
-            <div class="bg-slate-950 p-4 rounded-2xl border border-slate-800 text-center flex flex-col items-center">
-              <span class="text-xs font-bold text-amber-300 mb-2">3x3 Chessboard</span>
-              <div class="w-32 h-32 bg-slate-900 rounded-xl border border-slate-700 grid grid-cols-3 p-1.5 gap-1">
-                <div class="bg-purple-600 rounded-sm"></div>
-                <div class="bg-slate-200 rounded-sm"></div>
-                <div class="bg-purple-600 rounded-sm"></div>
-                <div class="bg-slate-200 rounded-sm"></div>
-                <div class="bg-purple-600 rounded-sm"></div>
-                <div class="bg-slate-200 rounded-sm"></div>
-                <div class="bg-purple-600 rounded-sm"></div>
-                <div class="bg-slate-200 rounded-sm"></div>
-                <div class="bg-purple-600 rounded-sm"></div>
-              </div>
-            </div>
-          </div>
+    // Slide 4 YouTube Quiz Handler
+    function handleYoutubeQuiz(isCorrect) {
+      const fb = document.getElementById('ytFeedback');
+      const btn = document.getElementById('ytCorrectBtn');
+      fb.classList.remove('hidden');
+      if (isCorrect) {
+        playCorrectSound();
+        btn.classList.add('bg-green-500', 'text-white', 'border-green-600', 'font-bold');
+      } else {
+        playWrongSound();
+      }
+    }
 
-          
-        </div>
-      </div>
-
+    // Slide 5 Database Interactive Simulation State
+    let storedDbCount = 0;
+    const storedItems = new Set();
+    function addDbItem(el, name) {
+      if (storedItems.has(name)) return;
+      playCorrectSound();
+      storedItems.add(name);
+      storedDbCount++;
+      el.classList.add('bg-green-100', 'border-green-500', 'text-green-800');
+      el.innerText = `✔️ Stored: ${name}`;
       
-    </div>
-
-    <!-- SLIDE 9: MASTER KNOWLEDGE CHECK -->
-    <div id="slide-9" class="slide-panel bg-white justify-between">
-      <div>
-        <span class="text-xs uppercase font-extrabold tracking-wider text-alphagen-purple bg-alphagen-purpleGhost px-4 py-1.5 rounded-md border border-alphagen-purplePale">Mastery Check</span>
-        <h2 class="text-3xl font-extrabold text-alphagen-purple mt-1"> Knowledge Check</h2>
-       
-      </div>
-
-      <div class="grid grid-cols-12 gap-6 my-auto items-stretch">
-        <!-- Q1 (6 cols) -->
-        <div class="col-span-6 bg-alphagen-purpleGhost border-2 border-alphagen-purplePale p-6 rounded-3xl flex flex-col justify-between">
-          <div>
-            <span class="bg-alphagen-purple text-white font-extrabold text-xs px-3 py-1 rounded-full uppercase mb-3 inline-block">QUESTION 1</span>
-            <h3 class="font-extrabold text-base text-alphagen-nearBlack mb-4 leading-snug">Which Pygame function resizes an actor's image?</h3>
-
-            <div class="space-y-3">
-              <button onclick="checkFinalQuiz(this, false)" class="quiz-option w-full">
-                <span>A) screen.draw.resize(actor)</span>
-              </button>
-              <button onclick="checkFinalQuiz(this, true)" class="quiz-option w-full">
-                <span>B) pygame.transform.scale(actor._surf, (width, height))</span>
-              </button>
-            </div>
-          </div>
-          <div class="quiz-feedback-box hidden p-3 rounded-xl text-xs font-bold text-center mt-3"></div>
-        </div>
-
-        <!-- Q2 (6 cols) -->
-        <div class="col-span-6 bg-alphagen-yellowPale border-2 border-yellow-300 p-6 rounded-3xl flex flex-col justify-between">
-          <div>
-            <span class="bg-alphagen-nearBlack text-alphagen-yellow font-extrabold text-xs px-3 py-1 rounded-full uppercase mb-3 inline-block">QUESTION 2</span>
-            <h3 class="font-extrabold text-base text-alphagen-nearBlack mb-4 leading-snug">What parameters are needed to draw a Circle shape?</h3>
-
-            <div class="space-y-3">
-              <button onclick="checkFinalQuiz(this, true)" class="quiz-option w-full">
-                <span>A) Center position (x, y), Radius size, and Color</span>
-              </button>
-              <button onclick="checkFinalQuiz(this, false)" class="quiz-option w-full">
-                <span>B) Width, Height, and Font size</span>
-              </button>
-            </div>
-          </div>
-          <div class="quiz-feedback-box hidden p-3 rounded-xl text-xs font-bold text-center mt-3"></div>
-        </div>
-      </div>
-
-      <button onclick="triggerFinalCelebration()" class="w-full bg-alphagen-yellow hover:bg-alphagen-yellowDark text-alphagen-nearBlack font-extrabold py-4 rounded-2xl text-base btn-interactive shadow-md flex items-center justify-center gap-2">
-        <span>Celebrate Completion</span>
-        <span>🎉</span>
-      </button>
-    </div>
-
-  </div>
-
-  <!-- Bottom Navigation Control Bar -->
-  <div class="nav-bar">
-    <button id="prev-btn" class="nav-btn btn-interactive" onclick="prevSlide()" disabled>
-      <i class="fa-solid fa-arrow-left"></i>
-      <span>Previous</span>
-    </button>
-
-    <span class="text-xs font-semibold text-white">
-      Use Arrow Keys (← / →) or buttons to navigate slides
-    </span>
-
-    <button id="next-btn" class="nav-btn btn-interactive" onclick="nextSlide()">
-      <span>Next</span>
-      <i class="fa-solid fa-arrow-right"></i>
-    </button>
-  </div>
-</div>
-
-<script>
-let currentSlide = 1;
-const totalSlides = 9;
-let soundEnabled = true;
-const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-
-/* Responsive stage scaler */
-function fitStageToScreen() {
-  const stage = document.querySelector('.slide-stage');
-  const nav = document.querySelector('.nav-bar');
-  if (!stage) return;
-  const availableWidth = window.innerWidth - 32;
-  if (availableWidth < 1280) {
-    const scale = availableWidth / 1280;
-    stage.style.transform = `scale(${scale})`;
-    stage.style.marginBottom = `-${720 * (1 - scale)}px`;
-    if (nav) nav.style.transform = `scale(${scale})`;
-  } else {
-    stage.style.transform = 'none';
-    stage.style.marginBottom = '0px';
-    if (nav) nav.style.transform = 'none';
-  }
-}
-
-function toggleAudio() {
-  soundEnabled = !soundEnabled;
-  document.getElementById('audio-btn').innerHTML = soundEnabled ? '<i class="fa-solid fa-volume-high"></i>' : '<i class="fa-solid fa-volume-xmark"></i>';
-}
-
-function playSound(type) {
-  if (!soundEnabled) return;
-  try {
-    if (audioCtx.state === 'suspended') audioCtx.resume();
-    const o = audioCtx.createOscillator();
-    const g = audioCtx.createGain();
-    o.connect(g);
-    g.connect(audioCtx.destination);
-    const now = audioCtx.currentTime;
-
-    if (type === 'correct') {
-      o.type = 'sine';
-      o.frequency.setValueAtTime(523, now);
-      o.frequency.exponentialRampToValueAtTime(659, now + 0.15);
-    } else if (type === 'wrong') {
-      o.type = 'sawtooth';
-      o.frequency.setValueAtTime(180, now);
-      o.frequency.linearRampToValueAtTime(110, now + 0.2);
-    } else {
-      o.type = 'triangle';
-      o.frequency.setValueAtTime(360, now);
-      o.frequency.exponentialRampToValueAtTime(720, now + 0.08);
+      document.getElementById('storedItemsList').innerText = `Stored items: ${storedDbCount} / 3`;
+      if (storedDbCount === 3) {
+        document.getElementById('dbDefinitionReveal').classList.remove('hidden');
+      }
     }
 
-    g.gain.setValueAtTime(0.09, now);
-    g.gain.exponentialRampToValueAtTime(0.01, now + (type === 'pop' ? 0.08 : 0.3));
-    o.start();
-    o.stop(now + (type === 'pop' ? 0.08 : 0.3));
-  } catch (e) {}
-}
+    // Slide 5 Blog Form Submission
+    function submitBlogPost() {
+      const title = document.getElementById('blogTitleInput').value.trim();
+      const content = document.getElementById('blogContentInput').value.trim();
+      const feed = document.getElementById('liveHomepageFeed');
 
-function triggerSuccess() {
-  playSound('correct');
-  if (typeof confetti === 'function') confetti({ particleCount: 65, spread: 55 });
-}
+      if (!title || !content) {
+        playWrongSound();
+        alert('Please enter both title and content!');
+        return;
+      }
 
-function initHeaderDots() {
-  const c = document.getElementById('header-dots-container');
-  if (!c) return;
-  c.innerHTML = '';
-  for (let i = 1; i <= totalSlides; i++) {
-    const d = document.createElement('div');
-    d.className = 'dot-indicator ' + (i === 1 ? 'active' : '');
-    d.onclick = () => goToSlide(i);
-    c.appendChild(d);
-  }
-}
+      playCorrectSound();
+      if (feed.querySelector('span')) {
+        feed.innerHTML = '';
+      }
 
-function updateSlideDisplay() {
-  document.querySelectorAll('.slide-panel').forEach((p, i) => p.classList.toggle('active', i + 1 === currentSlide));
-  document.querySelectorAll('.dot-indicator').forEach((d, i) => d.classList.toggle('active', i + 1 === currentSlide));
-  
-  const counterPill = document.getElementById('slide-counter-pill');
-  const dropdown = document.getElementById('slide-dropdown');
-  const prevBtn = document.getElementById('prev-btn');
-  const nextBtn = document.getElementById('next-btn');
+      const postCard = document.createElement('div');
+      postCard.className = 'bg-white p-2 rounded border border-brand-yellowDark shadow-sm';
+      postCard.innerHTML = `<strong class="text-brand-purple">✨ ${title}</strong><p class="text-[10px] text-brand-greyDark">${content} (Synced live via Cloud Database)</p>`;
+      feed.prepend(postCard);
 
-  if (counterPill) counterPill.innerText = `Slide ${currentSlide} / ${totalSlides}`;
-  if (dropdown) dropdown.value = currentSlide;
-  if (prevBtn) prevBtn.disabled = currentSlide === 1;
-  if (nextBtn) nextBtn.disabled = currentSlide === totalSlides;
-}
-
-function nextSlide() { if (currentSlide < totalSlides) { currentSlide++; updateSlideDisplay(); playSound('pop'); } }
-function prevSlide() { if (currentSlide > 1) { currentSlide--; updateSlideDisplay(); playSound('pop'); } }
-function goToSlide(n) { if (n >= 1 && n <= totalSlides) { currentSlide = n; updateSlideDisplay(); } }
-
-/* SLIDE 3: ACTOR RESIZING SCENARIO LOGIC */
-function chooseActorAction(action) {
-  playSound('pop');
-  const btnChange = document.getElementById('act-btn-change');
-  const btnResize = document.getElementById('act-btn-resize');
-  const followup = document.getElementById('followup-q-box');
-  const feedback = document.getElementById('scenario-feedback-msg');
-
-  if (action === 'change') {
-    btnChange.className = 'quiz-option w-full selected-wrong';
-    btnResize.className = 'quiz-option w-full';
-    if (feedback) feedback.innerText = '❌ Changing the image works, but what if you REALLY want to use this cool spaceship? Let\'s resize it!';
-    playSound('wrong');
-  } else {
-    btnResize.className = 'quiz-option w-full selected-correct';
-    btnChange.className = 'quiz-option w-full';
-    if (feedback) feedback.innerText = '✅ Awesome choice! We can keep our spaceship and resize it with Python code!';
-    if (followup) {
-      followup.classList.remove('hidden');
-      setTimeout(() => followup.classList.add('opacity-100'), 50);
+      document.getElementById('blogTitleInput').value = '';
+      document.getElementById('blogContentInput').value = '';
     }
-    triggerSuccess();
-  }
-}
 
-function chooseResizeValue(val) {
-  playSound('pop');
-  const feedback = document.getElementById('scenario-feedback-msg');
-  const previewBox = document.getElementById('preview-actor-box');
-  const tag = document.getElementById('actor-status-tag');
-  const label = document.getElementById('actor-size-label');
+    // Slide 6 API Waiter/Kitchen Animation Handlers
+    function triggerApiRequest() {
+      playTone(450, 'sine', 0.15);
+      const waiter = document.getElementById('waiterEmoji');
+      const statusText = document.getElementById('apiStatusText');
+      const trackingMsg = document.getElementById('apiTrackingMsg');
+      const kitchenDisplay = document.getElementById('kitchenOrderDisplay');
 
-  if (val === 'width_height') {
-    if (feedback) feedback.innerText = '🎉 Correct! Changing Width and Height scales the actor perfectly!';
-    if (previewBox) previewBox.className = 'transition-all duration-500 transform scale-75 flex flex-col items-center justify-center text-center';
-    if (tag) { tag.innerText = 'PERFECT FIT!'; tag.className = 'text-xs bg-emerald-500 px-3 py-1 rounded-full font-bold text-white'; }
-    if (label) label.innerText = 'Size: 120px x 120px (Scaled!)';
-    triggerSuccess();
-  } else {
-    if (feedback) feedback.innerText = '❌ Color & Rotation won\'t change how big the image looks. We need Width and Height!';
-    playSound('wrong');
-  }
-}
+      waiter.style.transform = 'translateX(60px) scale(1.1)';
+      statusText.innerText = "Waiter Request ➔ Kitchen";
+      trackingMsg.innerText = "Sending Request...";
 
-/* SLIDE 4: RESIZING SLIDER DEMO LOGIC */
-function updateActorResizeDemo() {
-  const width = parseInt(document.getElementById('resize-width-slider').value);
-  const height = parseInt(document.getElementById('resize-height-slider').value);
-
-  document.getElementById('slider-width-val').innerText = `${width} px`;
-  document.getElementById('slider-height-val').innerText = `${height} px`;
-
-  document.getElementById('code-w-val').innerText = width;
-  document.getElementById('code-h-val').innerText = height;
-
-  document.getElementById('actor-dim-tag').innerText = `${width} x ${height} px`;
-
-  const liveBox = document.getElementById('live-scaled-actor');
-  const emojiDisplay = document.getElementById('live-actor-emoji');
-
-  if (liveBox) {
-    liveBox.style.width = `${width}px`;
-    liveBox.style.height = `${height}px`;
-  }
-
-  if (emojiDisplay) {
-    // Dynamic scale calculated based on width/height slider values
-    const minDim = Math.min(width, height);
-    emojiDisplay.style.fontSize = `${minDim * 0.85}px`;
-    emojiDisplay.style.transform = `scaleX(${width / minDim}) scaleY(${height / minDim})`;
-  }
-}
-
-/* SLIDE 5: LAB CHECKLIST LOGIC */
-function checkLabTask(el) {
-  playSound('correct');
-  const checkboxes = document.querySelectorAll('#slide-5 input[type="checkbox"]');
-  let count = 0;
-  checkboxes.forEach(cb => { if (cb.checked) count++; });
-
-  const countText = document.getElementById('checklist-count-text');
-  if (countText) countText.innerText = `${count} / 4 Tasks Completed`;
-
-  if (count === 4) {
-    triggerSuccess();
-  }
-}
-
-/* SLIDE 6: GAME LAYOUT DEMO LOGIC */
-function selectGameLayout(type) {
-  playSound('pop');
-  const canvas = document.getElementById('stage-visual-canvas');
-  const pill = document.getElementById('layout-title-pill');
-
-  const btnSpace = document.getElementById('layout-btn-space');
-  const btnGarden = document.getElementById('layout-btn-garden');
-  const btnTraffic = document.getElementById('layout-btn-traffic');
-
-  btnSpace.className = 'w-full bg-white border-2 border-alphagen-purplePale p-3.5 rounded-2xl text-left btn-interactive font-extrabold text-sm text-alphagen-nearBlack flex items-center justify-between';
-  btnGarden.className = 'w-full bg-white border-2 border-alphagen-purplePale p-3.5 rounded-2xl text-left btn-interactive font-extrabold text-sm text-alphagen-nearBlack flex items-center justify-between';
-  btnTraffic.className = 'w-full bg-white border-2 border-alphagen-purplePale p-3.5 rounded-2xl text-left btn-interactive font-extrabold text-sm text-alphagen-nearBlack flex items-center justify-between';
-
-  if (type === 'space') {
-    btnSpace.className = 'w-full bg-white border-2 border-alphagen-purple p-3.5 rounded-2xl text-left btn-interactive font-extrabold text-sm text-alphagen-nearBlack flex items-center justify-between';
-    if (pill) pill.innerText = 'Space Battle (600x400)';
-
-    document.getElementById('pos-info-1').innerText = 'Alien 1: pos = (180, 80)';
-    document.getElementById('pos-info-2').innerText = 'Alien 2: pos = (420, 80)';
-    document.getElementById('pos-info-3').innerText = 'Spaceship: pos = (300, 340)';
-
-    canvas.style.backgroundColor = '#0b1329';
-    canvas.innerHTML = `
-      <div class="absolute top-[30px] left-[150px] text-5xl filter drop-shadow">👾</div>
-      <div class="absolute top-[30px] left-[350px] text-5xl filter drop-shadow">👾</div>
-      <div class="absolute bottom-[20px] left-[250px] text-6xl filter drop-shadow">🚀</div>
-    `;
-  } else if (type === 'garden') {
-    btnGarden.className = 'w-full bg-white border-2 border-alphagen-purple p-3.5 rounded-2xl text-left btn-interactive font-extrabold text-sm text-alphagen-nearBlack flex items-center justify-between';
-    if (pill) pill.innerText = 'House & Garden (600x400)';
-
-    document.getElementById('pos-info-1').innerText = 'House: pos = (200, 140)';
-    document.getElementById('pos-info-2').innerText = 'Flower: pos = (450, 170)';
-    document.getElementById('pos-info-3').innerText = 'Person: pos = (280, 180)';
-
-    canvas.style.backgroundColor = '#38bdf8';
-    canvas.innerHTML = `
-      <div class="absolute bottom-0 w-full h-[65px] bg-emerald-500 border-t-4 border-emerald-600"></div>
-      <div class="absolute bottom-[45px] left-[80px] text-6xl">🏠</div>
-      <div class="absolute bottom-[45px] left-[400px] text-5xl">🌻</div>
-      <div class="absolute bottom-[40px] left-[220px] text-6xl">🚶</div>
-    `;
-  } else if (type === 'traffic') {
-    btnTraffic.className = 'w-full bg-white border-2 border-alphagen-purple p-3.5 rounded-2xl text-left btn-interactive font-extrabold text-sm text-alphagen-nearBlack flex items-center justify-between';
-    if (pill) pill.innerText = 'Road Traffic Scenario (600x400)';
-
-    document.getElementById('pos-info-1').innerText = 'Red Car: pos = (150, 140)';
-    document.getElementById('pos-info-2').innerText = 'Yellow Car: pos = (320, 140)';
-    document.getElementById('pos-info-3').innerText = 'Traffic Light: pos = (480, 70)';
-
-    canvas.style.backgroundColor = '#334155';
-    canvas.innerHTML = `
-      <div class="absolute top-[110px] w-full border-t-4 border-dashed border-yellow-300"></div>
-      <div class="absolute top-[20px] right-[60px] text-5xl">🚦</div>
-      <div class="absolute top-[115px] left-[100px] text-6xl">🚗</div>
-      <div class="absolute top-[45px] left-[260px] text-6xl">🛺</div>
-    `;
-  }
-}
-
-/* SLIDE 7: SHAPE EXPLORER LOGIC */
-let currentShape = 'line';
-let currentShapeColor = 'yellow';
-
-function selectShape(shape) {
-  currentShape = shape;
-  playSound('pop');
-
-  ['line', 'square', 'rect', 'filled_rect', 'circle', 'filled_circle'].forEach(s => {
-    const btn = document.getElementById(`shape-btn-${s}`);
-    if (btn) {
-      if (s === shape) btn.className = 'bg-alphagen-purple text-white p-2.5 rounded-xl font-bold text-xs btn-interactive flex items-center justify-center gap-2';
-      else btn.className = 'bg-white border-2 border-alphagen-purplePale text-alphagen-nearBlack p-2.5 rounded-xl font-bold text-xs btn-interactive flex items-center justify-center gap-2';
+      setTimeout(() => {
+        kitchenDisplay.innerText = "🍳 Order Received in Kitchen!";
+        statusText.innerText = "Waiter Waiting in Kitchen";
+      }, 500);
     }
-  });
 
-  updateShapeRenderer();
-}
+    function triggerApiResponse() {
+      playCorrectSound();
+      const waiter = document.getElementById('waiterEmoji');
+      const statusText = document.getElementById('apiStatusText');
+      const trackingMsg = document.getElementById('apiTrackingMsg');
+      const kitchenDisplay = document.getElementById('kitchenOrderDisplay');
 
-function selectShapeColor(color) {
-  currentShapeColor = color;
-  playSound('pop');
-  updateShapeRenderer();
-}
+      waiter.style.transform = 'translateX(0px) scale(1.1)';
+      statusText.innerText = "Response ⬅️ Food Delivered!";
+      trackingMsg.innerText = "Response Received!";
+      kitchenDisplay.innerText = "[ Kitchen Ready ]";
 
-function updateShapeRenderer() {
-  const size = parseInt(document.getElementById('shape-size-slider').value);
-  document.getElementById('shape-param-val').innerText = `${size} px`;
-
-  const canvas = document.getElementById('shapeCanvas');
-  if (!canvas) return;
-  const ctx = canvas.getContext('2d');
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-  const colorMap = {
-    yellow: '#facc15',
-    cyan: '#22d3ee',
-    coral: '#f43f5e',
-    emerald: '#34d399'
-  };
-  const activeHex = colorMap[currentShapeColor] || '#facc15';
-
-  const codeLine = document.getElementById('shape-code-line');
-  const tag = document.getElementById('shape-name-tag');
-  const note = document.getElementById('shape-syntax-note');
-
-  ctx.strokeStyle = activeHex;
-  ctx.fillStyle = activeHex;
-  ctx.lineWidth = 4;
-
-  if (currentShape === 'line') {
-    ctx.beginPath();
-    ctx.moveTo(80, 70);
-    ctx.lineTo(80 + size, 70);
-    ctx.stroke();
-
-    if (tag) tag.innerText = 'screen.draw.line()';
-    if (codeLine) codeLine.innerText = `screen.draw.line((80, 70), (${80 + size}, 70), '${currentShapeColor}')`;
-    if (note) note.innerHTML = '<strong>Line Syntax:</strong> <code class="font-mono">screen.draw.line((x1, y1), (x2, y2), color)</code>';
-  } else if (currentShape === 'square') {
-    ctx.strokeRect(200 - size / 2, 70 - size / 2, size, size);
-
-    if (tag) tag.innerText = 'screen.draw.rect() [Square Border]';
-    if (codeLine) codeLine.innerText = `screen.draw.rect(Rect((${200 - Math.round(size/2)}, ${70 - Math.round(size/2)}), (${size}, ${size})), '${currentShapeColor}')`;
-    if (note) note.innerHTML = '<strong>Square Border Syntax:</strong> Use Rect with equal width &amp; height: <code class="font-mono">Rect((x, y), (side, side))</code>';
-  } else if (currentShape === 'rect') {
-    const w = size * 1.3;
-    const h = size * 0.7;
-    ctx.strokeRect(200 - w / 2, 70 - h / 2, w, h);
-
-    if (tag) tag.innerText = 'screen.draw.rect() [Rectangle Border]';
-    if (codeLine) codeLine.innerText = `screen.draw.rect(Rect((${200 - Math.round(w/2)}, ${70 - Math.round(h/2)}), (${Math.round(w)}, ${Math.round(h)})), '${currentShapeColor}')`;
-    if (note) note.innerHTML = '<strong>Rectangle Border Syntax:</strong> <code class="font-mono">screen.draw.rect(Rect((x, y), (w, h)), color)</code>';
-  } else if (currentShape === 'filled_rect') {
-    const w = size * 1.3;
-    const h = size * 0.7;
-    ctx.fillRect(200 - w / 2, 70 - h / 2, w, h);
-
-    if (tag) tag.innerText = 'screen.draw.filled_rect()';
-    if (codeLine) codeLine.innerText = `screen.draw.filled_rect(Rect((${200 - Math.round(w/2)}, ${70 - Math.round(h/2)}), (${Math.round(w)}, ${Math.round(h)})), '${currentShapeColor}')`;
-    if (note) note.innerHTML = '<strong>Filled Rectangle Syntax:</strong> <code class="font-mono">screen.draw.filled_rect(Rect((x, y), (w, h)), color)</code>';
-  } else if (currentShape === 'circle') {
-    const radius = size / 2;
-    ctx.beginPath();
-    ctx.arc(200, 70, radius, 0, Math.PI * 2);
-    ctx.stroke();
-
-    if (tag) tag.innerText = 'screen.draw.circle() [Outline]';
-    if (codeLine) codeLine.innerText = `screen.draw.circle((200, 70), ${Math.round(radius)}, '${currentShapeColor}')`;
-    if (note) note.innerHTML = '<strong>Circle Outline Syntax:</strong> <code class="font-mono">screen.draw.circle((center_x, center_y), radius, color)</code>';
-  } else if (currentShape === 'filled_circle') {
-    const radius = size / 2;
-    ctx.beginPath();
-    ctx.arc(200, 70, radius, 0, Math.PI * 2);
-    ctx.fill();
-
-    if (tag) tag.innerText = 'screen.draw.filled_circle()';
-    if (codeLine) codeLine.innerText = `screen.draw.filled_circle((200, 70), ${Math.round(radius)}, '${currentShapeColor}')`;
-    if (note) note.innerHTML = '<strong>Filled Circle Syntax:</strong> <code class="font-mono">screen.draw.filled_circle((center_x, center_y), radius, color)</code>';
-  }
-}
-
-/* SLIDE 9: FINAL QUIZ LOGIC */
-function checkFinalQuiz(el, correct) {
-  const card = el.closest('div');
-  const fb = card.querySelector('.quiz-feedback-box');
-  card.querySelectorAll('.quiz-option').forEach(x => x.classList.remove('selected-correct', 'selected-wrong'));
-
-  if (correct) {
-    el.classList.add('selected-correct');
-    if (fb) {
-      fb.innerText = '✅ Correct!';
-      fb.className = 'quiz-feedback-box bg-emerald-100 text-emerald-800 text-sm font-bold p-3 rounded-xl text-center mt-3 block';
+      setTimeout(() => {
+        statusText.innerText = "Waiter (API) Ready";
+      }, 500);
     }
-    triggerSuccess();
-  } else {
-    el.classList.add('selected-wrong');
-    if (fb) {
-      fb.innerText = '❌ Try again!';
-      fb.className = 'quiz-feedback-box bg-rose-100 text-rose-800 text-sm font-bold p-3 rounded-xl text-center mt-3 block';
+
+    // Slide 9 Live Prompt Detector
+    function liveCheckDay3Prompt() {
+      const text = document.getElementById('day3PromptArea').value.toLowerCase();
+
+      const chkPersona = document.getElementById('chk-persona');
+      const chkTech = document.getElementById('chk-tech');
+      const chkPages = document.getElementById('chk-pages');
+      const chkFirebase = document.getElementById('chk-firebase');
+      const chkResponsive = document.getElementById('chk-responsive');
+      const chkDatabase = document.getElementById('chk-database');
+      const chkAssets = document.getElementById('chk-assets');
+
+      if (text.includes('act as') || text.includes('developer') || text.includes('expert')) {
+        chkPersona.className = 'p-2 rounded-xl bg-green-100 border border-green-400 text-green-900 font-bold';
+      } else {
+        chkPersona.className = 'p-2 rounded-xl bg-white border border-gray-300 text-gray-600 font-medium';
+      }
+
+      if (text.includes('html') || text.includes('tailwind') || text.includes('javascript')) {
+        chkTech.className = 'p-2 rounded-xl bg-green-100 border border-green-400 text-green-900 font-bold';
+      } else {
+        chkTech.className = 'p-2 rounded-xl bg-white border border-gray-300 text-gray-600 font-medium';
+      }
+
+      if (text.includes('page') || text.includes('index.html')) {
+        chkPages.className = 'p-2 rounded-xl bg-green-100 border border-green-400 text-green-900 font-bold';
+      } else {
+        chkPages.className = 'p-2 rounded-xl bg-white border border-gray-300 text-gray-600 font-medium';
+      }
+
+      if (text.includes('firebaseconfig') || text.includes('firebase') || text.includes('api key')) {
+        chkFirebase.className = 'p-2 rounded-xl bg-green-100 border border-green-400 text-green-900 font-bold';
+      } else {
+        chkFirebase.className = 'p-2 rounded-xl bg-white border border-gray-300 text-gray-600 font-medium';
+      }
+
+      if (text.includes('responsive') || text.includes('mobile') || text.includes('desktop')) {
+        chkResponsive.className = 'p-2 rounded-xl bg-green-100 border border-green-400 text-green-900 font-bold';
+      } else {
+        chkResponsive.className = 'p-2 rounded-xl bg-white border border-gray-300 text-gray-600 font-medium';
+      }
+
+      if (text.includes('database') || text.includes('firestore') || text.includes('submit')) {
+        chkDatabase.className = 'p-2 rounded-xl bg-green-100 border border-green-400 text-green-900 font-bold';
+      } else {
+        chkDatabase.className = 'p-2 rounded-xl bg-white border border-gray-300 text-gray-600 font-medium';
+      }
+
+      if (text.includes('placeholder') || text.includes('image') || text.includes('logo')) {
+        chkAssets.className = 'p-2 rounded-xl bg-green-100 border border-green-400 text-green-900 font-bold';
+      } else {
+        chkAssets.className = 'p-2 rounded-xl bg-white border border-gray-300 text-gray-600 font-medium';
+      }
     }
-    playSound('wrong');
-  }
-}
 
-function triggerFinalCelebration() {
-  triggerSuccess();
-}
+    function checkDay3PromptQuality() {
+      const text = document.getElementById('day3PromptArea').value.trim();
+      const fb = document.getElementById('day3PromptFeedback');
+      fb.classList.remove('hidden');
 
-/* Global Navigation Listeners */
-document.addEventListener('keydown', e => {
-  if (['INPUT', 'SELECT', 'TEXTAREA'].includes(e.target.tagName)) return;
-  if (e.key === 'ArrowRight' || e.key === ' ') nextSlide();
-  if (e.key === 'ArrowLeft') prevSlide();
-});
+      if (text.length < 30) {
+        playWrongSound();
+        fb.innerHTML = `<span class="font-bold text-red-600">⚠️ Prompt is too short!</span> Please include role, Firebase config, database, and submit logic.`;
+        return;
+      }
 
-window.addEventListener('resize', fitStageToScreen);
+      playCorrectSound();
+      fb.innerHTML = `
+        <div class="font-extrabold text-brand-purple mb-1">🎉 Prompt Quality Analysis Complete!</div>
+        <p class="text-brand-black font-medium leading-relaxed">
+          Your prompt contains <strong>${text.length} characters</strong>. Verify that all checklist items on the left are green!
+        </p>
+      `;
+    }
 
-window.addEventListener('DOMContentLoaded', () => {
-  currentSlide = 1;
-  initHeaderDots();
-  updateSlideDisplay();
-  fitStageToScreen();
-  selectGameLayout('space');
-  selectShape('line');
-  updateActorResizeDemo();
-});
-</script>
+    // Slide 11 Final Quiz Handler
+    function handleFinalQuiz(btn, isCorrect) {
+      if (isCorrect) {
+        playCorrectSound();
+        btn.classList.remove('bg-white', 'border-brand-greyMid');
+        btn.classList.add('bg-green-500', 'text-white', 'border-green-600', 'font-bold');
+      } else {
+        playWrongSound();
+        btn.classList.remove('bg-white', 'border-brand-greyMid');
+        btn.classList.add('bg-red-100', 'border-red-400', 'text-red-700');
+      }
+    }
+
+    function triggerFinishCelebration() {
+      playTone(523.25, 'triangle', 0.15);
+      setTimeout(() => playTone(659.25, 'triangle', 0.15), 150);
+      setTimeout(() => playTone(783.99, 'triangle', 0.15), 300);
+      setTimeout(() => playTone(1046.50, 'triangle', 0.4), 450);
+
+      const victory = document.getElementById('victoryBanner');
+      if (victory) victory.classList.remove('hidden');
+
+      confetti({ particleCount: 150, spread: 90, origin: { y: 0.6 } });
+    }
+
+    updateSlideDisplay();
+  </script>
 </body>
 </html>
