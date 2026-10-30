@@ -60,8 +60,8 @@
     }
     body {
       margin: 0;
-      padding: 16px;
-      background-color: #5E48C4;
+      padding: 12px;
+      background-color: #0f081d;
       font-family: 'Poppins', sans-serif;
       color: #1A1A1A;
       overflow-x: hidden;
@@ -69,7 +69,7 @@
       min-height: 100vh;
       display: flex;
       flex-direction: column;
-      justify-content: flex-start;
+      justify-content: center;
       align-items: center;
     }
 
@@ -90,7 +90,7 @@
       box-sizing: border-box;
       background-color: #ffffff;
       border-radius: 28px;
-      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.4);
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
       border: 1px solid #EAE7FE;
       transform-origin: top center;
     }
@@ -134,7 +134,7 @@
 
     .nav-bar {
       width: 1280px;
-      margin: 16px auto 12px auto;
+      margin: 12px auto 8px auto;
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -143,9 +143,9 @@
     }
 
     .nav-btn {
-      background: #4A3AAD;
+      background: #2A1C68;
       color: #FFD071;
-      border: 2px solid #7B6ED4;
+      border: 2px solid #5E48C4;
       padding: 10px 24px;
       border-radius: 14px;
       font-family: 'Poppins', sans-serif;
@@ -158,9 +158,8 @@
       transition: all 0.2s ease;
     }
     .nav-btn:hover:not(:disabled) {
-      background: #FFD071;
-      color: #1A1A1A;
-      border-color: #FFD071;
+      background: #5E48C4;
+      color: #ffffff;
       transform: scale(1.04);
     }
     .nav-btn:disabled {
@@ -168,23 +167,11 @@
       cursor: not-allowed;
     }
 
-    .nav-btn.finish-btn {
-      background: #FFD071;
-      color: #1A1A1A;
-      border-color: #FFD071;
-      animation: pulseFinish 1.6s infinite alternate;
-    }
-
-    @keyframes pulseFinish {
-      0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255, 208, 113, 0.6); }
-      100% { transform: scale(1.05); box-shadow: 0 0 16px 4px rgba(255, 208, 113, 0.4); }
-    }
-
     .dot-indicator {
       width: 10px;
       height: 10px;
       border-radius: 50%;
-      background: rgba(255, 255, 255, 0.4);
+      background: #2A1C68;
       cursor: pointer;
       transition: all 0.2s ease;
     }
@@ -251,29 +238,11 @@
   </style>
 </head>
 
-<body class="bg-alphagen-purple">
+<body>
 <div class="stage-wrapper">
-
-  <!-- Top Alphagen Branding Header Bar -->
-  <header class="w-full bg-alphagen-purpleDark px-4 py-3.5 flex flex-wrap items-center justify-between gap-3 text-white shadow-md rounded-2xl mb-4 border border-alphagen-purpleMid">
-    <div class="flex items-center gap-3">
-      <a href="#" class="bg-alphagen-yellow hover:bg-alphagen-yellowDark text-alphagen-nearBlack px-4 py-2 rounded-xl font-extrabold text-xs md:text-sm shadow-sm transition-all flex items-center gap-2">
-        <span class="tracking-wide">ALPHAGEN LEARNING</span>
-      </a>
-      <span class="font-extrabold text-base md:text-xl tracking-tight text-white">Pygame Zero: Mastering Game Layouts and Shapes: Interactive Exploration</span>
-    </div>
-
-    <!-- Right Controls matching reference -->
-    <div class="flex items-center gap-3">
-      <button onclick="toggleAudio()" id="top-audio-btn" class="bg-alphagen-purple hover:bg-alphagen-purpleMid text-white p-2 rounded-lg transition-all" title="Toggle Sound">
-        <i class="fa-solid fa-volume-high text-base" id="sound-icon"></i>
-      </button>
-    </div>
-  </header>
-
   <div class="slide-stage">
 
-    <!-- Header Navigation Bar inside stage -->
+    <!-- Header Navigation Bar -->
     <header class="w-full bg-white border-b border-alphagen-purplePale px-6 py-2.5 flex items-center justify-between relative z-50">
       <div class="flex items-center gap-3">
         <div class="w-10 h-10 rounded-xl bg-alphagen-purple flex items-center justify-center text-white text-xl shadow-md shadow-alphagen-purple/20">
@@ -320,6 +289,7 @@
         Mastering <span class="spark-wavy-underline">Game Layouts &amp; Shapes</span>
       </h1>
 
+     
       <button onclick="nextSlide(); playSound('pop')" class="bg-alphagen-yellow hover:bg-alphagen-yellowDark text-alphagen-nearBlack font-extrabold text-xl px-12 py-5 rounded-2xl shadow-xl btn-interactive flex items-center gap-3">
         <span>Start Exploring</span>
         <i class="fa-solid fa-arrow-right"></i>
@@ -356,6 +326,7 @@
               </li>
             </ul>
           </div>
+          
         </div>
 
         <!-- Today's Session Headings (6 cols) -->
@@ -363,6 +334,7 @@
           <div>
             <div class="flex items-center justify-between border-b border-slate-800 pb-3 mb-6">
               <span class="text-sm font-mono text-alphagen-yellow font-extrabold uppercase">Level 2</span>
+              
             </div>
             
             <div class="space-y-4 font-sans">
@@ -389,6 +361,8 @@
           </div>
         </div>
       </div>
+
+     
     </div>
 
     <!-- SLIDE 3: OVERSIZED ACTOR SCENARIO -->
@@ -431,12 +405,15 @@
               </div>
             </div>
           </div>
+
+         
         </div>
 
         <!-- Visual Stage Preview (6 cols) -->
         <div class="col-span-6 bg-slate-900 border-2 border-slate-800 rounded-3xl p-7 text-white flex flex-col justify-between shadow-lg relative overflow-hidden">
           <div class="border-b border-slate-800 pb-3 mb-2 flex justify-between items-center z-10">
             <span class="text-xs font-mono text-alphagen-yellow font-bold uppercase">GAME WINDOW PREVIEW</span>
+           
           </div>
 
           <div class="game-grid-bg my-auto w-full h-[280px] rounded-2xl border border-slate-800 relative flex items-center justify-center overflow-hidden">
@@ -452,13 +429,16 @@
           </div>
         </div>
       </div>
+
+     
     </div>
 
     <!-- SLIDE 4: RESIZING SYNTAX & LIVE RESIZER TOOL -->
     <div id="slide-4" class="slide-panel bg-white justify-between">
       <div>
         <span class="text-xs uppercase font-extrabold tracking-wider text-alphagen-purple bg-alphagen-purpleGhost px-4 py-1.5 rounded-md border border-alphagen-purplePale">Syntax &amp; Practice</span>
-        <h2 class="text-3xl font-extrabold text-alphagen-purple mt-1">Resizing Syntax</h2>
+        <h2 class="text-3xl font-extrabold text-alphagen-purple mt-1">Resizing Syntax 
+       
       </div>
 
       <div class="grid grid-cols-12 gap-6 my-auto items-stretch">
@@ -497,18 +477,24 @@
           <div>
             <div class="border-b border-slate-800 pb-2 mb-3 text-xs text-alphagen-yellow font-bold flex justify-between">
               <span>PYGAME CODE</span>
+             
             </div>
 
             <div class="bg-slate-950 p-4 rounded-2xl border border-slate-800 text-xs leading-relaxed space-y-1">
               <div><span class="text-purple-400 font-bold">import</span> pygame</div>
               <br>
               <div>hero = Actor(<span class="text-yellow-300">'spaceship'</span>)</div>
-              <div class="text-slate-500"># Resize actor image using transform scale</div>
+              <div class="text-slate-500"># Resize actor image using transform scale and updating the dimensions</div>
               <div class="bg-slate-900 p-2.5 rounded-xl border-l-4 border-alphagen-yellow text-amber-300">
                 hero._surf = pygame.transform.scale(<br>
                 &nbsp;&nbsp;hero._surf, (<span id="code-w-val" class="text-cyan-300">80</span>, <span id="code-h-val" class="text-cyan-300">80</span>)<br>
-                )
+                
+                  )<br>
+                  house._update_pos()<br>
+                 
+                  
               </div>
+              
             </div>
           </div>
 
@@ -525,6 +511,8 @@
           </div>
         </div>
       </div>
+
+    
     </div>
 
     <!-- SLIDE 5: ACTOR RESIZING LAB CHALLENGE -->
@@ -532,6 +520,7 @@
       <div>
         <span class="text-xs uppercase font-extrabold tracking-wider text-alphagen-purple bg-alphagen-purpleGhost px-4 py-1.5 rounded-md border border-alphagen-purplePale">Lab Practice</span>
         <h2 class="text-3xl font-extrabold text-alphagen-purple mt-1">Coding Challenge</h2>
+       
       </div>
 
       <div class="my-auto bg-alphagen-purpleGhost border-2 border-alphagen-purplePale rounded-3xl p-8 shadow-sm">
@@ -573,6 +562,7 @@
       <div>
         <span class="text-xs uppercase font-extrabold tracking-wider text-alphagen-purple bg-alphagen-purpleGhost px-4 py-1.5 rounded-md border border-alphagen-purplePale">Stage Design Challenge</span>
         <h2 class="text-3xl font-extrabold text-alphagen-purple mt-1">Game Layout Design Challenge</h2>
+       
       </div>
 
       <div class="grid grid-cols-12 gap-6 my-auto items-stretch">
@@ -620,7 +610,7 @@
         <!-- Stage Reference Canvas (7 cols) -->
         <div class="col-span-7 bg-slate-900 border-2 border-slate-800 rounded-3xl p-6 text-white flex flex-col justify-between shadow-lg">
           <div class="flex justify-between items-center border-b border-slate-800 pb-2 mb-2">
-            <span class="text-xs font-mono text-alphagen-yellow font-bold uppercase" id="layout-title-pill">Space Battle (600x400)</span>
+           
           </div>
 
           <!-- Dynamic Backdrop Stage -->
@@ -636,6 +626,8 @@
           </div>
         </div>
       </div>
+
+     
     </div>
 
     <!-- SLIDE 7: SHAPES EXPLORER & SYNTAX -->
@@ -643,6 +635,7 @@
       <div>
         <span class="text-xs uppercase font-extrabold tracking-wider text-alphagen-purple bg-alphagen-purpleGhost px-4 py-1.5 rounded-md border border-alphagen-purplePale">Native Shapes</span>
         <h2 class="text-3xl font-extrabold text-alphagen-purple mt-1">Drawing Shapes</h2>
+       
       </div>
 
       <div class="grid grid-cols-12 gap-6 my-auto items-stretch">
@@ -715,6 +708,8 @@
           </div>
         </div>
       </div>
+
+     
     </div>
 
     <!-- SLIDE 8: SHAPE PROJECTS LAB CHALLENGE -->
@@ -722,6 +717,7 @@
       <div>
         <span class="text-xs uppercase font-extrabold tracking-wider text-alphagen-purple bg-alphagen-purpleGhost px-4 py-1.5 rounded-md border border-alphagen-purplePale">Lab Practice</span>
         <h2 class="text-3xl font-extrabold text-alphagen-purple mt-1">Coding Challenge</h2>
+        
       </div>
 
       <div class="grid grid-cols-12 gap-6 my-auto items-stretch">
@@ -738,6 +734,7 @@
                 Draw <strong>4 lines</strong> (2 vertical, 2 horizontal) to create the grid. Then draw circles (⭕) and diagonal lines (❌) as noughts and crosses
               </p>
             </div>
+            
           </div>
 
           <!-- Project 2 Card -->
@@ -751,6 +748,7 @@
                 Use filled rectangles (<code class="font-mono">screen.draw.filled_rect</code>) of alternating colors (e.g. purple &amp; white) to draw a 3x3 board!
               </p>
             </div>
+            
           </div>
         </div>
 
@@ -797,8 +795,12 @@
               </div>
             </div>
           </div>
+
+          
         </div>
       </div>
+
+      
     </div>
 
     <!-- SLIDE 9: MASTER KNOWLEDGE CHECK -->
@@ -806,6 +808,7 @@
       <div>
         <span class="text-xs uppercase font-extrabold tracking-wider text-alphagen-purple bg-alphagen-purpleGhost px-4 py-1.5 rounded-md border border-alphagen-purplePale">Mastery Check</span>
         <h2 class="text-3xl font-extrabold text-alphagen-purple mt-1"> Knowledge Check</h2>
+       
       </div>
 
       <div class="grid grid-cols-12 gap-6 my-auto items-stretch">
@@ -861,13 +864,13 @@
       <span>Previous</span>
     </button>
 
-    <span class="text-xs font-semibold text-white/90">
+    <span class="text-xs font-semibold text-white">
       Use Arrow Keys (← / →) or buttons to navigate slides
     </span>
 
-    <button id="next-btn" class="nav-btn btn-interactive" onclick="handleNextOrFinish()">
-      <span id="next-btn-text">Next</span>
-      <i id="next-btn-icon" class="fa-solid fa-arrow-right"></i>
+    <button id="next-btn" class="nav-btn btn-interactive" onclick="nextSlide()">
+      <span>Next</span>
+      <i class="fa-solid fa-arrow-right"></i>
     </button>
   </div>
 </div>
@@ -898,11 +901,7 @@ function fitStageToScreen() {
 
 function toggleAudio() {
   soundEnabled = !soundEnabled;
-  const iconHtml = soundEnabled ? '<i class="fa-solid fa-volume-high"></i>' : '<i class="fa-solid fa-volume-xmark"></i>';
-  const stageAudioBtn = document.getElementById('audio-btn');
-  const topAudioBtn = document.getElementById('top-audio-btn');
-  if (stageAudioBtn) stageAudioBtn.innerHTML = iconHtml;
-  if (topAudioBtn) topAudioBtn.innerHTML = soundEnabled ? '<i class="fa-solid fa-volume-high text-base"></i>' : '<i class="fa-solid fa-volume-xmark text-base"></i>';
+  document.getElementById('audio-btn').innerHTML = soundEnabled ? '<i class="fa-solid fa-volume-high"></i>' : '<i class="fa-solid fa-volume-xmark"></i>';
 }
 
 function playSound(type) {
@@ -938,33 +937,7 @@ function playSound(type) {
 
 function triggerSuccess() {
   playSound('correct');
-  if (typeof confetti === 'function') confetti({ particleCount: 70, spread: 60, origin: { y: 0.6 } });
-}
-
-function triggerGrandConfetti() {
-  playSound('correct');
-  if (typeof confetti === 'function') {
-    confetti({
-      particleCount: 120,
-      spread: 90,
-      origin: { y: 0.5 },
-      colors: ['#5E48C4', '#FFD071', '#59E4FB', '#ED5661', '#ffffff']
-    });
-    setTimeout(() => {
-      confetti({
-        particleCount: 80,
-        angle: 60,
-        spread: 55,
-        origin: { x: 0 }
-      });
-      confetti({
-        particleCount: 80,
-        angle: 120,
-        spread: 55,
-        origin: { x: 1 }
-      });
-    }, 250);
-  }
+  if (typeof confetti === 'function') confetti({ particleCount: 65, spread: 55 });
 }
 
 function initHeaderDots() {
@@ -987,58 +960,16 @@ function updateSlideDisplay() {
   const dropdown = document.getElementById('slide-dropdown');
   const prevBtn = document.getElementById('prev-btn');
   const nextBtn = document.getElementById('next-btn');
-  const nextBtnText = document.getElementById('next-btn-text');
-  const nextBtnIcon = document.getElementById('next-btn-icon');
 
   if (counterPill) counterPill.innerText = `Slide ${currentSlide} / ${totalSlides}`;
   if (dropdown) dropdown.value = currentSlide;
   if (prevBtn) prevBtn.disabled = currentSlide === 1;
-
-  if (nextBtn && nextBtnText && nextBtnIcon) {
-    if (currentSlide === totalSlides) {
-      nextBtnText.innerText = 'Finish';
-      nextBtnIcon.className = 'fa-solid fa-flag-checkered';
-      nextBtn.classList.add('finish-btn');
-      nextBtn.disabled = false;
-    } else {
-      nextBtnText.innerText = 'Next';
-      nextBtnIcon.className = 'fa-solid fa-arrow-right';
-      nextBtn.classList.remove('finish-btn');
-      nextBtn.disabled = false;
-    }
-  }
+  if (nextBtn) nextBtn.disabled = currentSlide === totalSlides;
 }
 
-function handleNextOrFinish() {
-  if (currentSlide === totalSlides) {
-    triggerGrandConfetti();
-  } else {
-    nextSlide();
-  }
-}
-
-function nextSlide() { 
-  if (currentSlide < totalSlides) { 
-    currentSlide++; 
-    updateSlideDisplay(); 
-    playSound('pop'); 
-  } 
-}
-
-function prevSlide() { 
-  if (currentSlide > 1) { 
-    currentSlide--; 
-    updateSlideDisplay(); 
-    playSound('pop'); 
-  } 
-}
-
-function goToSlide(n) { 
-  if (n >= 1 && n <= totalSlides) { 
-    currentSlide = n; 
-    updateSlideDisplay(); 
-  } 
-}
+function nextSlide() { if (currentSlide < totalSlides) { currentSlide++; updateSlideDisplay(); playSound('pop'); } }
+function prevSlide() { if (currentSlide > 1) { currentSlide--; updateSlideDisplay(); playSound('pop'); } }
+function goToSlide(n) { if (n >= 1 && n <= totalSlides) { currentSlide = n; updateSlideDisplay(); } }
 
 /* SLIDE 3: ACTOR RESIZING SCENARIO LOGIC */
 function chooseActorAction(action) {
@@ -1106,6 +1037,7 @@ function updateActorResizeDemo() {
   }
 
   if (emojiDisplay) {
+    // Dynamic scale calculated based on width/height slider values
     const minDim = Math.min(width, height);
     emojiDisplay.style.fontSize = `${minDim * 0.85}px`;
     emojiDisplay.style.transform = `scaleX(${width / minDim}) scaleY(${height / minDim})`;
@@ -1314,13 +1246,13 @@ function checkFinalQuiz(el, correct) {
 }
 
 function triggerFinalCelebration() {
-  triggerGrandConfetti();
+  triggerSuccess();
 }
 
 /* Global Navigation Listeners */
 document.addEventListener('keydown', e => {
   if (['INPUT', 'SELECT', 'TEXTAREA'].includes(e.target.tagName)) return;
-  if (e.key === 'ArrowRight' || e.key === ' ') handleNextOrFinish();
+  if (e.key === 'ArrowRight' || e.key === ' ') nextSlide();
   if (e.key === 'ArrowLeft') prevSlide();
 });
 
